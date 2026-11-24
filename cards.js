@@ -191,9 +191,9 @@ window.KH_CARDS = {
     { t: 'Komedi', x: 'Rakibine en kötü espriyi en büyük özgüvenle yap.' },
     { t: 'Komedi', x: 'Bir stand-up gösterisine “Pazartesi” konulu kısa bir açılış yap.' },
     { t: 'Komedi', x: 'Gülmeden “Şemsiye, şapka, şalgam” demeyi 3 kez dene.' },
-    { t: 'Romantik', x: 'Bir buzdolabına aşk mektubu oku.' },
-    { t: 'Romantik', x: 'Rakibine abartılı bir şiirle “iyi geceler” dile.' },
-    { t: 'Romantik', x: 'Eski bir film sahnesindeki gibi dramatik bir veda yap.' },
+    { t: 'Tatlılık', x: 'Buzdolabına “her gün bizi doyurduğun için” bir teşekkür mektubu oku.' },
+    { t: 'Tatlılık', x: 'Rakibinin bugün yaptığı güzel bir şeyi sunucu gibi coşkuyla anons et.' },
+    { t: 'Tatlılık', x: 'Bir çizgi film karakteri gibi rakibine “günaydın” de ve günün ilk iyi haberini ver.' },
     { t: 'Tahmin', x: 'Rakibin aklından 1–10 arası bir sayı tutsun; 3 hakta bul.' },
     { t: 'Tahmin', x: 'Rakibin bir ünlüyü düşünsün; sadece evet/hayır sorularıyla 5 soruda bul.' },
     { t: 'Tahmin', x: 'Rakibin bir şarkıyı mırıldansın; sen 3 hakta bil.' },
@@ -213,7 +213,7 @@ window.KH_CARDS = {
     { t: 'Kraliyet', x: '👑 Kendi ülkenin milli marşını uydur ve göğsünü gere gere söyle.', p: 2 },
     { t: 'Kraliyet', x: '👑 Bir saray şefi ol ve “dünyanın en lüks tostunu” tarif et.', p: 2 },
     { t: 'Kraliyet', x: '👑 Sarayın Kraliçesi/Kralı seçildin! Bursa ile Tekirdağ halkına taç giyme konuşmanı yap.', p: 2 },
-    { t: 'Romantik', x: 'Bursa’nın yeşilini ve Tekirdağ’ın denizini birleştiren iki dizelik bir şiir söyle.' }
+    { t: 'Tatlılık', x: 'Bursa’nın yeşilini ve Tekirdağ’ın denizini anlatan iki dizelik komik bir tekerleme uydur.' }
   ],
 
   bonus: [
@@ -244,15 +244,15 @@ window.KH_CARDS = {
     { t: 'Ferman', x: 'Kraliçe buyurdu: Parti Sarayı’nın resmi marşını 4 dizeyle uydur ve söyle.' },
     { t: 'Ferman', x: 'Kraliçe buyurdu: Bir şövalye gibi diz çök ve 3 cümlelik bağlılık yemini et.' },
     { t: 'Ferman', x: 'Kraliçe buyurdu: Saray soytarısı ol ve rakibini gülümset.' },
-    { t: 'Ferman', x: 'Kraliçe buyurdu: Rakibin için en güzel iltifatı, şiir tadında söyle.' },
+    { t: 'Ferman', x: 'Kraliçe buyurdu: Rakibinin en komik özelliğini bir ödül konuşmasıyla öv.' },
     { t: 'Ferman', x: 'Kraliçe buyurdu: Koza Han’da ipek satan bir tüccar ol ve rakibine hayalî bir ipek eşarp sat.' },
     { t: 'Ferman', x: 'Kraliçe buyurdu: Sarayın haber spikeri ol: “Son dakika! Saraydaki İskender ve köfte stokları tükendi!” haberini dramatik ver.' },
     { t: 'Ferman', x: 'Kraliçe buyurdu: Kraliçenin hayalî tacını tarif et: hangi taşlar, hangi renkler, Bursa ipeği mi Marmara incisi mi?' },
     { t: 'Ferman', x: 'Kraliçe buyurdu: Bir süre sadece kraliyet diliyle konuş (“Efendim, müsaadenizle…”).' },
     { t: 'Ferman', x: 'Kraliçe buyurdu: Bir kraliyet balosunda vals yapıyormuş gibi dans et.' },
-    { t: 'Ferman', x: 'Kraliçe buyurdu: Kraliçeye hayalî bir şakayık buketi sun ve iki dizelik bir şiir oku.' },
+    { t: 'Ferman', x: 'Kraliçe buyurdu: Şakayık çiçeğini hiç görmemiş birine, belgesel sunucusu gibi anlat.' },
     { t: 'Ferman', x: 'Kraliçe buyurdu: Barış Akarsu’dan sevdiğin bir şarkının nakaratını söyle.' },
-    { t: 'Ferman', x: 'Kraliçe buyurdu: Nohut’un (sarayın muhabbet kuşu) taklidini yap ve kraliçeye bir cıvıltı serenadı sun.' },
+    { t: 'Ferman', x: 'Kraliçe buyurdu: Nohut’un (sarayın muhabbet kuşu) taklidini yap ve kısa bir cıvıltı konseri ver.' },
     { t: 'Ferman', x: 'Kraliçe buyurdu: Dibekle karıştırılmış, şekerli bir Türk kahvesini saray şefi gibi tarif et.' },
     { t: 'Ferman', x: 'Kraliçe buyurdu: Kraliçenin favorisi soslu makarnanın TV reklamını yap.' },
     { t: 'Ferman', x: 'Kraliçe buyurdu: Usta bir örgücü gibi kraliçeye hayalî bir atkı ör ve teslim et.' },
@@ -287,9 +287,9 @@ window.KH_CARDS = {
     { q: 'Kraliçenin hangi dilde altyapısı var?', a: ['Japonca', 'Almanca', 'İtalyanca', 'Rusça'] },
     { q: '“Ceyda” isminin anlamı hangisi?', a: ['İyi, güzel, narin, nazik', 'Cesur ve güçlü', 'Işık, aydınlık', 'Deniz kızı'] },
     { q: 'İlk mesaj hangi uygulamada atıldı?', a: ['Threads', 'Instagram', 'WhatsApp', 'Telegram'] },
-    { q: 'İlk buluşma hangi tarihteydi?', a: ['26 Eylül', '12 Temmuz', '7 Kasım', '30 Haziran'] },
+    { q: 'İlk yüz yüze tanışma hangi tarihteydi?', a: ['26 Eylül', '12 Temmuz', '7 Kasım', '30 Haziran'] },
     { q: 'İlk görüntülü konuşma ne zamandı?', a: ['16 Temmuz', '26 Eylül', '29 Haziran', '1 Ağustos'] },
-    { q: 'İkinci buluşma hangi tarihteydi?', a: ['7 Kasım', '26 Eylül', '16 Temmuz', '12 Temmuz'] },
+    { q: 'İkinci yüz yüze görüşme hangi tarihteydi?', a: ['7 Kasım', '26 Eylül', '16 Temmuz', '12 Temmuz'] },
     { q: 'Kraliçe şu an hangi bölümde okuyor?', a: ['Halkla İlişkiler', 'Edebiyat', 'Hukuk', 'Mimarlık'] },
     { q: 'Kara Kaplı Defter’e göre neye alerjimiz var?', a: ['Battaniye', 'Kedi tüyü', 'Polen', 'Çilek'] },
     { q: 'Sandviçlerini sevdiğimiz yer hangisi?', a: ['Shell', 'Starbucks', 'Simit Sarayı', 'Kahve Dünyası'] },
@@ -302,7 +302,7 @@ window.KH_CARDS = {
   // Pas hakkı kullanılınca gelen hafif, komik alternatifler
   pas: [
     'Pas cezası: Tavuk gibi gıdakla.',
-    'Pas cezası: Rakibine en içten iltifatını et.',
+    'Pas cezası: Rakibine “bugünün en eğlenceli oyuncusu” madalyası tak.',
     'Pas cezası: Bir dahaki tura kadar her cümlenin sonuna “efendim” ekle.',
     'Pas cezası: Rakibin “tamam” diyene kadar heykel gibi donup kal.',
     'Pas cezası: Adını tersten söyle ve bir reverans yap.',
@@ -323,7 +323,7 @@ window.KH_CARDS = {
 
 window.KH_WHEEL = [
   { name: 'Komedi', color: '#ff3d8b', icon: '🤡' },
-  { name: 'Romantik', color: '#ff6fb5', icon: '💘' },
+  { name: 'Tatlılık', color: '#ff6fb5', icon: '🍬' },
   { name: 'Tahmin', color: '#00d1ff', icon: '🔮' },
   { name: 'Performans', color: '#ffb800', icon: '🎤' },
   { name: 'Taklit', color: '#9b5cff', icon: '🎭' },
@@ -358,15 +358,15 @@ window.KH_DEFTER = {
     ['🥪', 'Sandviç', 'Shell’in sandviçleri'],
     ['🎌', 'Kültür', 'Japonca altyapısı; Japon ve Kore dizileri'],
     ['♊', 'Burç', 'İkizler'],
-    ['💖', 'İsminin anlamı', 'İyi, güzel, narin, nazik; herkese iyiliği dokunan']
+    ['✨', 'İsminin anlamı', 'İyi, güzel, narin, nazik; herkese iyiliği dokunan']
   ],
   story: [
     ['29 Haziran', 'Threads’te ilk mesaj ve ilk konuşma'],
     ['30 Haziran', 'Instagram’da takip ve ilk sohbet'],
     ['12 Temmuz', 'WhatsApp’ta ilk mesajlaşma'],
     ['16 Temmuz', 'İlk görüntülü konuşma'],
-    ['26 Eylül', 'İlk buluşma'],
-    ['7 Kasım', 'İkinci buluşma']
+    ['26 Eylül', 'İlk yüz yüze tanışma'],
+    ['7 Kasım', 'İkinci görüşme']
   ],
   black: [
     'Balık ve sakatat',

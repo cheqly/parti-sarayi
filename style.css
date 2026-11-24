@@ -511,7 +511,7 @@ button { touch-action: manipulation; }
 /* ana sayfa */
 .subtag { display: inline-flex; align-items: center; gap: 6px; }
 .subtag i { display: inline-flex; color: var(--rose); }
-.subtag i .ico { fill: currentColor; stroke: none; }
+.subtag i { color: var(--gold); }
 .who { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .who-tile {
   position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px;

@@ -1,6 +1,6 @@
 # 👑 Parti Sarayı — Semih & Kraliçe Ceyda’nın Gecesi
 
-> **Bursa 16 ❤ Tekirdağ 59.** İki telefon. Tek oda. Aynı görev. Ortak skor. Bol kahkaha.
+> **Bursa 16 ✦ Tekirdağ 59.** İki telefon. Tek oda. Aynı görev. Ortak skor. Bol kahkaha.
 >
 > Gece, Semih ile Kraliçe Ceyda’nın sarayında geçer. Gecenin kazananı tacı giyer:
 > **👸🏽 Kraliçe Ceyda** ya da **🤴🏽 Kral Semih**.

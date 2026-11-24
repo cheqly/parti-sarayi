@@ -308,7 +308,7 @@
         const ansId = s.card.answerer;
         const correct = s.card.opts[s.card.ans];
         const loserPrize = s.card.queen || (other(s, ansId) || {}).id;
-        settle(s, right ? ansId : loserPrize, 1, right ? 'Doğru! Kraliçeyi iyi tanıyor 💜' : 'Yanlış! Doğru cevap: ' + correct);
+        settle(s, right ? ansId : loserPrize, 1, right ? 'Doğru! Kraliçeyi iyi tanıyor ✨' : 'Yanlış! Doğru cevap: ' + correct);
         break;
       }
       case 'tiebreak': {

@@ -562,7 +562,7 @@
       '<div class="hero">' +
       logo() +
       '<p class="tagline">Semih &amp; Kraliçe Ceyda’nın gecesi</p>' +
-      '<p class="subtag">Bursa 16 <i>' + ic('heart', 'ico-xs') + '</i> Tekirdağ 59</p>' +
+      '<p class="subtag">Bursa 16 <i>' + ic('sparkle', 'ico-xs') + '</i> Tekirdağ 59</p>' +
       '</div>' +
       (invited
         ? '<section class="panel invite"><div class="lbl">Davetlisin</div><div class="code-big">' + esc(urlCode) + '</div><p class="muted small center-text">Adını seç ve odaya gir.</p></section>'
@@ -624,7 +624,7 @@
       '<details class="list-item defter"><summary>' + ic('book') + '<span>Beyaz Kaplı Defter</span>' + ic('chevron', 'chev') + '</summary><div class="list-body">' +
       '<div class="d-title">Kraliçemiz Ceyda 👸🏽</div>' +
       '<ul class="d-list">' + D.white.map((r) => '<li><span class="d-e">' + r[0] + '</span><span><b>' + esc(r[1]) + '</b><small>' + esc(r[2]) + '</small></span></li>').join('') + '</ul>' +
-      '<div class="d-title">Hikâyemiz</div>' +
+      '<div class="d-title">Tanışma hikâyesi</div>' +
       '<ol class="d-time">' + D.story.map((r) => '<li><b>' + esc(r[0]) + '</b><span>' + esc(r[1]) + '</span></li>').join('') + '</ol>' +
       '<div class="d-title dark">Kara Kaplı Defter</div>' +
       '<ul class="d-black">' + D.black.map((x) => '<li>' + ic('x', 'ico-xs') + '<span>' + esc(x) + '</span></li>').join('') + '</ul>' +
