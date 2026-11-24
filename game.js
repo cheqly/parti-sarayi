@@ -72,7 +72,7 @@
       const w = rnd(WHEEL.length);
       const c = pickFrom(s, 'cark', 'cark:' + w, (x) => x.t === WHEEL[w].name);
       card.wheel = w;
-      card.cat = WHEEL[w].icon + ' ' + c.t;
+      card.cat = c.t;
       card.text = c.x;
       card.points = c.p || 1;
     } else {
@@ -213,7 +213,7 @@
         s.card = {
           id: s.seq,
           game: s.game,
-          cat: '🎟️ Pas',
+          cat: 'Pas',
           text: CARDS.pas[rnd(CARDS.pas.length)],
           words: null,
           points: 0,
@@ -283,7 +283,7 @@
         if (p1.score === p2.score) {
           s.phase = 'tiebreak';
           s.seq += 1;
-          s.card = { id: s.seq, game: 'final', cat: '⚔️ Beraberlik', text: CARDS.final[rnd(CARDS.final.length)], points: 1, isPass: false };
+          s.card = { id: s.seq, game: 'final', cat: 'Beraberlik', text: CARDS.final[rnd(CARDS.final.length)], points: 1, isPass: false };
         } else {
           s.phase = 'final';
           s.winner = p1.score > p2.score ? p1.id : p2.id;

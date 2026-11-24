@@ -483,3 +483,156 @@ button { touch-action: manipulation; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* =========================================================
+   v2 — ikonlar, listeler ve sade bileşenler
+   ========================================================= */
+.ico { width: 20px; height: 20px; flex: 0 0 auto; }
+.ico-sm { width: 17px; height: 17px; }
+.ico-xs { width: 14px; height: 14px; vertical-align: -2px; }
+.btn .ico { margin: 0 2px 0 -2px; }
+
+.av {
+  display: inline-grid; place-items: center; flex: 0 0 auto;
+  width: 40px; height: 40px; border-radius: 50%; font-size: 22px; line-height: 1;
+  background: radial-gradient(circle at 50% 30%, rgba(242, 203, 116, 0.22), rgba(255, 255, 255, 0.04));
+  box-shadow: inset 0 0 0 1.5px var(--line);
+}
+.av-sm { width: 28px; height: 28px; font-size: 16px; }
+.av-md { width: 46px; height: 46px; font-size: 26px; }
+.av-lg { width: 58px; height: 58px; font-size: 32px; }
+.av-xl { width: 112px; height: 112px; font-size: 64px; box-shadow: inset 0 0 0 2px var(--gold), 0 0 40px rgba(242, 203, 116, 0.25); }
+.av-empty { color: var(--muted); background: transparent; box-shadow: inset 0 0 0 1.5px var(--line-soft); }
+.av-empty .ico { width: 20px; height: 20px; }
+
+.tag { font-style: normal; font-size: 11px; font-weight: 800; color: var(--muted); border: 1px solid var(--line-soft); border-radius: 99px; padding: 1px 7px; margin-left: 6px; vertical-align: 2px; }
+.tag.gold { color: var(--gold-hi); border-color: var(--line); }
+
+/* ana sayfa */
+.subtag { display: inline-flex; align-items: center; gap: 6px; }
+.subtag i { display: inline-flex; color: var(--rose); }
+.subtag i .ico { fill: currentColor; stroke: none; }
+.who { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.who-tile {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 16px 8px 14px; border-radius: var(--r-lg); cursor: pointer;
+  background: rgba(0, 0, 0, 0.18); border: 1.5px solid var(--line-soft); transition: border-color .15s, background .15s;
+}
+.who-tile b { font-size: 17px; }
+.who-tile small { color: var(--muted); font-size: 12px; font-weight: 700; }
+.who-tile.on { border-color: var(--gold); background: rgba(242, 203, 116, 0.08); }
+.who-tile .tick { position: absolute; top: 8px; right: 8px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--gold); color: #2a1600; }
+.who-tile .tick .ico { width: 14px; height: 14px; stroke-width: 3; }
+.link-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px;
+  background: none; border: 0; color: var(--muted); font-weight: 800; cursor: pointer;
+}
+.link-btn:active { color: var(--text); }
+
+.list { display: flex; flex-direction: column; border: 1px solid var(--line-soft); border-radius: var(--r-lg); background: var(--surface); overflow: hidden; }
+.list-item + .list-item { border-top: 1px solid var(--line-soft); }
+.list-item summary { list-style: none; display: flex; align-items: center; gap: 12px; padding: 15px 16px; cursor: pointer; font-weight: 800; }
+.list-item summary::-webkit-details-marker { display: none; }
+.list-item summary > .ico:first-child { color: var(--gold); }
+.list-item summary span { flex: 1; }
+.chev { color: var(--muted); transition: transform .2s; width: 18px; height: 18px; }
+.list-item[open] .chev { transform: rotate(90deg); }
+.list-body { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 10px; }
+.net-row { display: flex; align-items: center; gap: 8px; }
+.net-row span:first-of-type { flex: 1; }
+.net-row.ok .ico { color: var(--green); }
+.net-row.bad .ico { color: var(--red); }
+
+.err-ico { color: var(--gold); display: grid; place-items: center; }
+.err-ico .ico { width: 40px; height: 40px; }
+
+/* üst bar */
+.pill { display: inline-flex; align-items: center; gap: 6px; }
+.led { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+.icon-btn { display: grid; place-items: center; color: var(--text); }
+
+/* menü */
+.menu { display: flex; flex-direction: column; border: 1px solid var(--line-soft); border-radius: var(--r-lg); overflow: hidden; }
+.menu-row { display: flex; align-items: center; gap: 12px; min-height: 54px; padding: 0 16px; background: var(--surface); border: 0; text-align: left; font-weight: 800; cursor: pointer; }
+.menu-row + .menu-row { border-top: 1px solid var(--line-soft); }
+.menu-row .ico { color: var(--gold); }
+.menu-row.danger, .menu-row.danger .ico { color: var(--red); }
+.menu-row:active { background: var(--surface-2); }
+
+/* oda */
+.room-code .code-big { background: none; border: 0; width: 100%; padding: 4px 0; }
+.players { gap: 8px; }
+.player-row { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: var(--r-md); background: rgba(0, 0, 0, 0.18); border: 1.5px solid transparent; }
+.player-row.ready { border-color: rgba(53, 212, 154, 0.45); }
+.player-row.empty { border: 1.5px dashed var(--line-soft); background: transparent; }
+.pr-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.pr-body b { font-size: 16px; }
+.pr-body small { font-size: 12px; color: var(--muted); font-weight: 700; }
+.pr-body small.ok { color: var(--green); }
+.pr-body small.warn { color: var(--gold); }
+.state { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 900; color: var(--muted); border: 1px solid var(--line-soft); border-radius: 99px; padding: 4px 10px; }
+.state.ok { color: #062a1c; background: var(--green); border-color: var(--green); }
+.spinner-sm { width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid var(--line-soft); border-top-color: var(--gold); animation: spin .9s linear infinite; }
+
+/* ayarlar */
+.set-row > span { display: inline-flex; align-items: center; gap: 8px; color: var(--text); font-weight: 800; }
+.set-row > span .ico { color: var(--gold); }
+.seg { display: inline-flex; padding: 3px; border-radius: 12px; background: rgba(0, 0, 0, 0.28); border: 1px solid var(--line-soft); }
+.seg-btn { min-width: 40px; height: 34px; border: 0; border-radius: 9px; background: transparent; font-weight: 900; color: var(--muted); cursor: pointer; }
+.seg-btn.on { background: var(--gold); color: #2a1600; }
+.seg-btn[disabled] { cursor: default; }
+
+/* skor */
+.scoreboard { gap: 10px; }
+.sc-av .av { width: 36px; height: 36px; font-size: 20px; }
+.scoreboard.compact .sc-av .av { width: 30px; height: 30px; font-size: 17px; }
+.sc-name .tag { margin-left: 4px; }
+.target { display: flex; align-items: center; justify-content: center; gap: 6px; }
+.last { display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+/* oyun listesi */
+.g-ico { color: color-mix(in srgb, var(--c) 70%, #fff); }
+.g-ico .ico { width: 22px; height: 22px; }
+.g-ico.sm { flex: 0 0 32px; width: 32px; height: 32px; border-radius: 10px; }
+.g-ico.sm .ico { width: 17px; height: 17px; }
+.g-badge { display: inline-flex; align-items: center; gap: 2px; }
+.gcard .chev { margin-left: 2px; }
+.gcard.open .chev { transform: rotate(90deg); }
+.meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.meta span { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 800; color: var(--muted); border: 1px solid var(--line-soft); border-radius: 99px; padding: 4px 10px; }
+
+/* oyun ekranı */
+.game-title { justify-content: flex-start; gap: 10px; }
+.game-title b { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.turn-line { align-self: center; display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px 5px 5px; border-radius: 99px; border: 1px solid var(--line-soft); font-size: 15px; font-weight: 800; }
+.turn-line.mine { border-color: var(--gold); color: var(--gold-hi); box-shadow: 0 0 0 3px rgba(242, 203, 116, 0.12); }
+.deck-card .crown-svg { width: 56px; height: 35px; }
+.card-note { font-size: 14px; color: #6b5a86; font-weight: 700; }
+.pts { display: inline-flex; align-items: center; gap: 4px; }
+.btn-timer { display: inline-flex; }
+.judge-wait { display: flex; align-items: center; justify-content: center; gap: 10px; text-align: left; }
+.judge-wait .ico { color: var(--gold); }
+.judge-q .ico { color: var(--gold); }
+.wheel-pointer { width: 0; height: 0; top: -10px; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 20px solid var(--gold-hi); filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.5)); }
+.wheel-hub .crown-svg { width: 30px; height: 19px; filter: none; }
+.wheel-wrap.mini .wheel-hub .crown-svg { width: 16px; height: 10px; }
+.wheel-wrap.mini .wheel-pointer { top: -8px; border-left-width: 8px; border-right-width: 8px; border-top-width: 13px; }
+
+/* beraberlik / final */
+.tie-title { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.tie-title .ico { width: 28px; height: 28px; color: var(--gold); }
+.final-crown .crown-svg { width: 96px; height: 60px; animation: float 2.4s ease-in-out infinite; }
+.boss-tag { margin-top: 10px; }
+.boss-label { margin-top: 2px; }
+.boss-av { margin: 14px 0 6px; }
+.fs { gap: 12px; justify-content: flex-start; }
+.fs .rank { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-weight: 900; background: var(--surface-2); color: var(--muted); }
+.fs:first-child .rank { background: var(--gold); color: #2a1600; }
+.fs-name { flex: 1; text-align: left; font-weight: 800; }
+
+/* geçmiş */
+.h-ico { width: 32px; height: 32px; flex: 0 0 32px; border-radius: 10px; display: grid; place-items: center; color: var(--gold); background: var(--surface-2); }
+.h-ico .ico { width: 17px; height: 17px; }
+.tag { white-space: nowrap; }
+.pr-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 0; }
+.pr-meta .tag { margin-left: 6px; vertical-align: 0; }

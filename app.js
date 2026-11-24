@@ -164,7 +164,7 @@
       if (ui.pending && ui.pending.aid === a.aid && S && S.rev === rev) {
         ui.pending = null;
         render();
-        toast('⏳ Oda sahibine ulaşılamadı, tekrar dene.', 'warn');
+        toast('Oda sahibine ulaşılamadı, tekrar dene.', 'warn');
       }
     }, 7000);
   }
@@ -199,7 +199,7 @@
     if (!s) {
       if (S && ui.screen === 'game') {
         leaveRoom(true);
-        showError('Oda kapatıldı. 🎈');
+        showError('Oda kapatıldı.');
       }
       return;
     }
@@ -225,7 +225,7 @@
       const w = s.last.winner;
       if (w) {
         const p = s.players.find((x) => x.id === w);
-        showBurst((p ? p.avatar + ' ' + esc(p.name) : '') + ' <b>+' + s.last.pts + '</b>', s.last.note);
+        showBurst((p ? esc(p.name) : '') + ' <b>+' + s.last.pts + '</b>', s.last.note);
         if (w === profile.id || isLocal()) {
           sfx.win();
           vibrate([40, 40, 80]);
@@ -234,7 +234,7 @@
           vibrate(60);
         }
       } else if (s.phase === 'play' || s.phase === 'lobby') {
-        showBurst('Tur geçti', s.last.note || 'Puan yok 🤝');
+        showBurst('Tur geçti', s.last.note || 'Puan yok');
       }
     }
     if (s.card && (!prev || !prev.card || prev.card.id !== s.card.id)) {
@@ -246,11 +246,11 @@
       sfx.win();
     }
     if (prev && prev.phase === 'room' && s.phase === 'lobby') {
-      toast('🎉 İkiniz de hazırsınız. Parti başlasın!');
+      toast('İkiniz de hazırsınız. Parti başlasın!');
     }
     if (prev && prev.players.length < 2 && s.players.length === 2 && s.phase === 'room') {
       const o = s.players.find((p) => p.id !== profile.id);
-      if (o && !isLocal()) toast(o.avatar + ' <b>' + esc(o.name) + '</b> odaya katıldı!');
+      if (o && !isLocal()) toast('<b>' + esc(o.name) + '</b> odaya katıldı');
     }
   }
 
@@ -264,7 +264,7 @@
   function needName() {
     saveProfileFromInputs();
     if (!profile.name) {
-      toast('✍️ Önce takma adını yaz!', 'warn');
+      toast('Önce adını seç ya da yaz.', 'warn');
       const n = document.getElementById('nameInput');
       if (n) {
         n.focus();
@@ -320,7 +320,7 @@
   async function joinRoom(code, resume) {
     code = cleanCode(code);
     if (code.length !== 6) {
-      toast('🔑 Oda kodu 6 karakter olmalı.', 'warn');
+      toast('Oda kodu 6 karakter olmalı.', 'warn');
       return;
     }
     if (!resume && needName()) return;
@@ -341,7 +341,7 @@
       room.leave();
       room = null;
       S = null;
-      return showError('Bu oda dolu. Parti Sarayı iki kişiliktir 🙂');
+      return showError('Bu oda dolu. Parti Sarayı iki kişiliktir.');
     }
     session = { mode: 'online', code };
     store.set('session', session);
@@ -431,7 +431,7 @@
   }
 
   function copy(text) {
-    const done = () => toast('📋 Kopyalandı!');
+    const done = () => toast('Davet linki kopyalandı');
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text, done));
     } else fallbackCopy(text, done);
@@ -479,6 +479,64 @@
     afterRender();
   }
 
+  /* ---------- ikon seti (çizgi ikonlar, tek stil) ---------- */
+  const ICONS = {
+    crown: '<path d="m2 6 4 11h12l4-11-6 5-4-7-4 7-6-5Z"/><path d="M6 21h12"/>',
+    users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    login: '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/>',
+    phone: '<rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/>',
+    share: '<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="m16 6-4-4-4 4"/><path d="M12 2v13"/>',
+    chat: '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+    copy: '<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    x: '<path d="M18 6 6 18M6 6l12 12"/>',
+    refresh: '<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M8 16H3v5"/>',
+    ticket: '<path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 11v2M13 17v2"/>',
+    timer: '<path d="M10 2h4"/><path d="m12 14 3-3"/><circle cx="12" cy="14" r="8"/>',
+    info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
+    back: '<path d="m12 19-7-7 7-7M19 12H5"/>',
+    menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
+    sound: '<path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/>',
+    mute: '<path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="m22 9-6 6M16 9l6 6"/>',
+    history: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/>',
+    flag: '<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/>',
+    trophy: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
+    home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
+    wifi: '<path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 8.82a15 15 0 0 1 20 0"/><path d="M12 20h.01"/>',
+    play: '<path d="M6 3 20 12 6 21Z"/>',
+    dice: '<rect width="18" height="18" x="3" y="3" rx="3"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/>',
+    laugh: '<circle cx="12" cy="12" r="10"/><path d="M18 13a6 6 0 0 1-12 0Z"/><path d="M9 9h.01M15 9h.01"/>',
+    search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+    ban: '<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
+    wheel: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/><path d="M12 2v8M12 14v8M2 12h8M14 12h8M4.9 4.9l5.7 5.7M13.4 13.4l5.7 5.7M19.1 4.9l-5.7 5.7M10.6 13.4l-5.7 5.7"/>',
+    scroll: '<path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v3h4"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/>',
+    zap: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',
+    help: '<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/>',
+    clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+    target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+    repeat: '<path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>',
+    logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
+    trash: '<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+    cards: '<rect width="12" height="16" x="8" y="4" rx="2"/><path d="M4 8v11a2 2 0 0 0 2 2h9"/>',
+    lock: '<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+    mic: '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"/>',
+    eyeoff: '<path d="M9.9 4.2A9 9 0 0 1 12 4c7 0 10 8 10 8a13 13 0 0 1-1.7 2.7M6.6 6.6A13.5 13.5 0 0 0 2 12s3 8 10 8a9 9 0 0 0 5.4-1.6"/><path d="m2 2 20 20"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
+    swords: '<path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2M9.5 6.5 14 2h3v3l-4.5 4.5M5 14l4 4M7 17l-3 3M3 19l2 2"/>',
+    chevron: '<path d="m9 18 6-6-6-6"/>',
+    heart: '<path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/>',
+    sparkle: '<path d="M12 3 13.9 8.8 20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2Z"/><path d="M19 17v4M17 19h4"/>',
+    user: '<circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/>'
+  };
+  const ic = (name, cls) =>
+    '<svg class="ico' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[name] || '') + '</svg>';
+  const GAME_ICON = { sans: 'dice', guldur: 'laugh', dogru: 'search', yasakli: 'ban', cark: 'wheel', kralice: 'scroll', bonus: 'zap' };
+  const gIco = (g) => ic(GAME_ICON[g.id] || 'sparkle');
+  const av = (p, cls) => '<span class="av' + (cls ? ' ' + cls : '') + '">' + (p ? p.avatar : '') + '</span>';
+  const nameOfPlain = (id) => {
+    const p = P(id);
+    return p ? esc(p.name) : '—';
+  };
+
   const CROWN =
     '<svg class="crown-svg" viewBox="0 0 64 40" aria-hidden="true"><defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a3"/><stop offset="1" stop-color="#d9a032"/></linearGradient></defs>' +
     '<path d="M6 34 L2 10 L18 20 L32 4 L46 20 L62 10 L58 34 Z" fill="url(#cg)"/><rect x="6" y="34" width="52" height="5" rx="2" fill="#d9a032"/>' +
@@ -487,66 +545,79 @@
     return '<div class="logo' + (small ? ' small' : '') + '">' + CROWN + '<div class="logo-word">Parti <span>Sarayı</span></div></div>';
   }
 
+  const PRESETS = [
+    { n: 'Semih', av: '🤴', role: 'Sarayın kralı' },
+    { n: 'Ceyda', av: '👸', role: 'Sarayın kraliçesi' }
+  ];
+
   function vHome() {
     const urlCode = cleanCode(ui.joinCode);
+    const invited = urlCode.length === 6;
+    const preset = PRESETS.find((x) => x.n === profile.name && x.av === profile.avatar);
     return (
       '<main class="screen home">' +
       '<div class="hero">' +
       logo() +
-      '<p class="tagline">Semih &amp; Kraliçe Ceyda’nın gecesi</p><p class="subtag">Bursa 16 <i>❤</i> Tekirdağ 59</p>' +
+      '<p class="tagline">Semih &amp; Kraliçe Ceyda’nın gecesi</p>' +
+      '<p class="subtag">Bursa 16 <i>' + ic('heart', 'ico-xs') + '</i> Tekirdağ 59</p>' +
       '</div>' +
-      '<section class="panel">' +
-      '<label class="lbl" for="nameInput">Takma adın</label>' +
-      '<div class="name-row"><button class="avatar-btn" data-a="avatar" aria-label="Avatar değiştir">' +
-      profile.avatar +
-      '</button><input id="nameInput" class="input" maxlength="16" autocomplete="off" autocapitalize="words" placeholder="ör. Ceyda" value="' +
-      esc(profile.name) +
-      '"></div>' +
-      '<div class="quick"><span class="muted small">Hızlı seç:</span>' +
-      '<button class="chip-btn' + (profile.name === 'Semih' ? ' on' : '') + '" data-a="quick" data-n="Semih" data-av="🤴">🤴 Semih</button>' +
-      '<button class="chip-btn' + (profile.name === 'Ceyda' ? ' on' : '') + '" data-a="quick" data-n="Ceyda" data-av="👸">👸 Ceyda</button></div>' +
-      '</section>' +
-      (urlCode.length === 6
-        ? '<section class="panel invite"><div class="invite-title">💌 Davet edildin!</div><div class="code-big">' + esc(urlCode) + '</div><button class="btn btn-primary btn-xl" data-a="join">🚪 Odaya Katıl</button></section>'
+      (invited
+        ? '<section class="panel invite"><div class="lbl">Davetlisin</div><div class="code-big">' + esc(urlCode) + '</div><p class="muted small center-text">Adını seç ve odaya gir.</p></section>'
         : '') +
+      '<section class="panel">' +
+      '<div class="lbl">Sen kimsin?</div>' +
+      '<div class="who">' +
+      PRESETS.map(
+        (x) =>
+          '<button class="who-tile' + (preset && preset.n === x.n ? ' on' : '') + '" data-a="quick" data-n="' + x.n + '" data-av="' + x.av + '">' +
+          '<span class="av av-lg">' + x.av + '</span><b>' + x.n + '</b><small>' + x.role + '</small>' +
+          (preset && preset.n === x.n ? '<span class="tick">' + ic('check') + '</span>' : '') +
+          '</button>'
+      ).join('') +
+      '</div>' +
+      '<div class="name-row"><button class="avatar-btn" data-a="avatar" aria-label="Avatar değiştir">' + profile.avatar + '</button>' +
+      '<input id="nameInput" class="input" maxlength="16" autocomplete="off" autocapitalize="words" placeholder="ya da başka bir ad yaz" value="' + esc(profile.name) + '"></div>' +
+      '</section>' +
       '<section class="panel actions">' +
-      '<button class="btn ' + (urlCode.length === 6 ? 'btn-ghost' : 'btn-primary btn-xl') + '" data-a="create">🎉 Oda Kur</button>' +
-      '<div class="join-row"><input id="codeInput" class="input code-input" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ODA KODU" value="' +
-      esc(urlCode) +
-      '"><button class="btn btn-secondary" data-a="join">Katıl</button></div>' +
-      '<div class="divider"><span>ya da</span></div>' +
-      '<button class="btn btn-ghost" data-a="localSetup">📱 Tek Telefonda Oyna</button>' +
+      (invited
+        ? '<button class="btn btn-primary btn-xl" data-a="join">' + ic('login') + 'Odaya katıl</button>' +
+          '<button class="btn btn-ghost" data-a="create">' + ic('crown') + 'Yeni oda kur</button>'
+        : '<button class="btn btn-primary btn-xl" data-a="create">' + ic('crown') + 'Oda kur</button>' +
+          '<div class="divider"><span>ya da koda katıl</span></div>' +
+          '<div class="join-row"><input id="codeInput" class="input code-input" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ODA KODU" value="' + esc(urlCode) + '">' +
+          '<button class="btn btn-secondary" data-a="join" aria-label="Katıl">' + ic('login') + 'Katıl</button></div>') +
+      '<button class="link-btn" data-a="localSetup">' + ic('phone') + 'Tek telefonda oyna</button>' +
       '</section>' +
       (ui.localSetup
-        ? '<section class="panel"><div class="lbl">Tek telefon: oyuncu adları</div>' +
+        ? '<section class="panel"><div class="lbl">Tek telefon • oyuncular</div>' +
           '<input id="local1" class="input" maxlength="16" placeholder="1. oyuncu" value="' + esc(ui.localNames[0] || 'Semih') + '">' +
           '<input id="local2" class="input" maxlength="16" placeholder="2. oyuncu" value="' + esc(ui.localNames[1] || 'Ceyda') + '">' +
-          '<button class="btn btn-primary" data-a="startLocal">▶️ Başla</button></section>'
+          '<button class="btn btn-primary" data-a="startLocal">' + ic('play') + 'Başla</button></section>'
         : '') +
-      '<details class="panel help"><summary>❓ Nasıl oynanır?</summary>' +
-      '<ol class="steps"><li><b>Oda Kur</b>a bas, linki WhatsApp’tan arkadaşına gönder.</li>' +
-      '<li>Arkadaşın linke dokunur ya da 6 haneli kodu yazar.</li>' +
-      '<li>İkiniz de <b>Hazırım</b> deyince lobi açılır, oyunu seçersiniz.</li>' +
-      '<li>Sıradaki kart çeker, görev iki ekranda da aynı anda görünür.</li>' +
-      '<li>Turu kazanan puanı alır. Hedef puana ilk ulaşan tacı kapar: <b>Sarayın Kraliçesi</b> ya da <b>Sarayın Kralı</b> 👑</li></ol>' +
-      '<p class="muted">Sesli/görüntülü konuşma için WhatsApp ya da telefon görüşmesini açık tutun. Her görev reddedilebilir ya da değiştirilebilir.</p>' +
-      '</details>' +
-      vSchedule() +
-      '<details class="panel help" id="netTest"><summary>📡 Bağlantı testi</summary>' +
-      '<p class="muted small">Online oda için en az bir sunucuya ulaşabiliyor olman yeterli.</p>' +
+      '<section class="list">' +
+      '<details class="list-item"><summary>' + ic('help') + '<span>Nasıl oynanır?</span>' + ic('chevron', 'chev') + '</summary><div class="list-body">' +
+      '<ol class="steps"><li><b>Oda kur</b>, linki WhatsApp’tan gönder.</li>' +
+      '<li>Diğer oyuncu linke dokunur ya da 6 haneli kodu yazar.</li>' +
+      '<li>İkiniz de <b>Hazırım</b> deyince oyunu seçersiniz.</li>' +
+      '<li>Sıradaki kart çeker; görev iki ekranda aynı anda görünür.</li>' +
+      '<li>Hedef puana ilk ulaşan tacı giyer.</li></ol>' +
+      '<p class="muted small">Sesli ya da görüntülü konuşmayı WhatsApp’tan açık tutun. Her görev değiştirilebilir.</p></div></details>' +
+      '<details class="list-item"><summary>' + ic('clock') + '<span>Gece programı</span>' + ic('chevron', 'chev') + '</summary><div class="list-body">' + vScheduleTable() + '</div></details>' +
+      '<details class="list-item" id="netTest"><summary>' + ic('wifi') + '<span>Bağlantı testi</span>' + ic('chevron', 'chev') + '</summary><div class="list-body">' +
+      '<p class="muted small">Online oda için en az bir sunucuya ulaşman yeterli.</p>' +
       '<div id="netResult" class="net-result">' + (ui.netResult || '') + '</div>' +
-      '<button class="btn btn-secondary" data-a="netTest">Testi başlat</button></details>' +
-      '<footer class="foot">Parti Sarayı • iki kişilik online parti gecesi</footer>' +
+      '<button class="btn btn-ghost" data-a="netTest">' + ic('wifi') + 'Testi başlat</button></div></details>' +
+      '</section>' +
+      '<footer class="foot">Parti Sarayı</footer>' +
       '</main>'
     );
   }
 
+  function vScheduleTable() {
+    return '<table class="sched">' + SCHEDULE.map((r) => '<tr><td class="t">' + r[0] + '</td><td>' + esc(r[1]) + '</td><td class="d">' + r[2] + '</td></tr>').join('') + '</table>';
+  }
   function vSchedule() {
-    return (
-      '<details class="panel help"><summary>🕙 Önerilen gece programı</summary><table class="sched">' +
-      SCHEDULE.map((r) => '<tr><td class="t">' + r[0] + '</td><td>' + esc(r[1]) + '</td><td class="d">' + r[2] + '</td></tr>').join('') +
-      '</table></details>'
-    );
+    return '<section class="list"><details class="list-item"><summary>' + ic('clock') + '<span>Gece programı</span>' + ic('chevron', 'chev') + '</summary><div class="list-body">' + vScheduleTable() + '</div></details></section>';
   }
 
   function vConnecting() {
@@ -557,49 +628,51 @@
     return (
       '<main class="screen center">' +
       logo(true) +
-      '<div class="panel err"><div class="big-emoji">🙈</div><p>' +
-      esc(ui.error) +
-      '</p><button class="btn btn-primary" data-a="home">🏠 Ana sayfa</button></div></main>'
+      '<div class="panel err"><div class="err-ico">' + ic('info') + '</div><p>' + esc(ui.error) + '</p>' +
+      '<button class="btn btn-primary" data-a="home">' + ic('home') + 'Ana sayfa</button></div></main>'
     );
   }
 
   /* ---------- oyun içi ---------- */
   function vTopbar() {
-    const pill = isLocal() ? '<span class="pill local">📱 Tek telefon</span>' : '<span id="statusPill" class="pill ' + ui.status + '">' + statusText() + '</span>';
+    const pill = isLocal()
+      ? '<span class="pill local">' + ic('phone', 'ico-xs') + 'Tek telefon</span>'
+      : '<span id="statusPill" class="pill ' + ui.status + '"><i class="led"></i><span>' + statusText() + '</span></span>';
     return (
       '<header class="topbar">' +
       logo(true) +
-      '<div class="top-right">' +
-      pill +
-      '<button class="icon-btn" data-a="menu" aria-label="Menü">☰</button></div>' +
+      '<div class="top-right">' + pill + '<button class="icon-btn" data-a="menu" aria-label="Menü">' + ic('menu') + '</button></div>' +
       '</header>' +
       (ui.showMenu ? vMenu() : '')
     );
   }
 
   function statusText() {
-    return { online: '● Bağlı', connecting: '● Bağlanıyor', reconnecting: '● Yeniden bağlanıyor', offline: '● Çevrimdışı' }[ui.status] || '●';
+    return { online: 'Bağlı', connecting: 'Bağlanıyor', reconnecting: 'Yeniden bağlanıyor', offline: 'Çevrimdışı' }[ui.status] || '';
   }
   function updateStatusPill() {
     const el = document.getElementById('statusPill');
     if (el) {
       el.className = 'pill ' + ui.status;
-      el.textContent = statusText();
+      const t = el.querySelector('span');
+      if (t) t.textContent = statusText();
       el.title = 'Bağlı sunucu: ' + (ui.links || '-');
     }
   }
 
+  function menuRow(a, icon, label, cls) {
+    return '<button class="menu-row' + (cls ? ' ' + cls : '') + '" data-a="' + a + '">' + ic(icon) + '<span>' + label + '</span></button>';
+  }
   function vMenu() {
     return (
-      '<div class="sheet-backdrop" data-a="menu"></div><div class="sheet">' +
-      '<button class="btn btn-ghost" data-a="sound">' + (ui.sound ? '🔊 Ses: Açık' : '🔇 Ses: Kapalı') + '</button>' +
-      '<button class="btn btn-ghost" data-a="history">📜 Tur geçmişi</button>' +
-      (!isLocal() && S ? '<button class="btn btn-ghost" data-a="share">📤 Davet linkini paylaş</button>' : '') +
-      (S && (S.phase === 'lobby' || S.phase === 'play') ? '<button class="btn btn-ghost" data-a="finish">🏁 Geceyi bitir, tacı ver 👑</button>' : '') +
-      (!isLocal() && isHost() ? '<button class="btn btn-danger" data-a="closeRoom">🧹 Odayı kapat</button>' : '') +
-      '<button class="btn btn-danger" data-a="leave">🚪 ' + (isLocal() ? 'Oyunu bitir' : 'Odadan çık') + '</button>' +
-      '<button class="btn btn-secondary" data-a="menu">Kapat</button>' +
-      '</div>'
+      '<div class="sheet-backdrop" data-a="menu"></div><div class="sheet"><h3>Menü</h3><div class="menu">' +
+      menuRow('sound', ui.sound ? 'sound' : 'mute', ui.sound ? 'Ses açık' : 'Ses kapalı') +
+      menuRow('history', 'history', 'Tur geçmişi') +
+      (!isLocal() && S ? menuRow('share', 'share', 'Davet linkini paylaş') : '') +
+      (S && (S.phase === 'lobby' || S.phase === 'play') ? menuRow('finish', 'flag', 'Geceyi bitir, tacı ver') : '') +
+      (!isLocal() && isHost() ? menuRow('closeRoom', 'trash', 'Odayı kapat', 'danger') : '') +
+      menuRow('leave', 'logout', isLocal() ? 'Oyunu bitir' : 'Odadan çık', 'danger') +
+      '</div><button class="btn btn-ghost" data-a="menu">Kapat</button></div>'
     );
   }
 
@@ -611,17 +684,18 @@
         .map((p) => {
           const on = isLocal() || p.id === profile.id || presence[p.id];
           const pct = Math.min(100, Math.round((p.score / S.target) * 100));
+          const meTag = p.id === profile.id && !isLocal() ? '<em class="tag">Sen</em>' : '';
           return (
-            '<div class="sc' + (tp && tp.id === p.id ? ' turn' : '') + (p.id === profile.id && !isLocal() ? ' me' : '') + '">' +
-            '<div class="sc-av">' + p.avatar + (isLocal() ? '' : '<i class="dot ' + (on ? 'on' : 'off') + '"></i>') + '</div>' +
-            '<div class="sc-body"><div class="sc-name">' + esc(p.name) + (p.id === profile.id && !isLocal() ? ' <small>(sen)</small>' : '') + '</div>' +
+            '<div class="sc' + (tp && tp.id === p.id ? ' turn' : '') + '">' +
+            '<div class="sc-av">' + av(p) + (isLocal() ? '' : '<i class="dot ' + (on ? 'on' : 'off') + '"></i>') + '</div>' +
+            '<div class="sc-body"><div class="sc-name">' + esc(p.name) + meTag + '</div>' +
             '<div class="bar"><i style="width:' + pct + '%"></i></div></div>' +
             '<div class="sc-pts">' + p.score + '</div></div>'
           );
         })
-        .join('<div class="vs">VS</div>') +
+        .join('') +
       '</div>' +
-      '<div class="target">🎯 Hedef: <b>' + S.target + '</b> puan</div>'
+      '<div class="target">' + ic('target', 'ico-xs') + 'Hedef ' + S.target + ' puan</div>'
     );
   }
 
@@ -636,8 +710,8 @@
     const host = P(S.hostId);
     const long = Date.now() - ui.hostAwaySince > 20000;
     return (
-      '<div class="banner">📡 ' + (host ? esc(host.name) : 'Oda sahibi') + ' yeniden bağlanıyor…' +
-      (long ? ' <button class="btn btn-mini" data-a="takeover">Yönetimi devral</button>' : '') +
+      '<div class="banner">' + ic('wifi', 'ico-sm') + '<span>' + (host ? esc(host.name) : 'Oda sahibi') + ' yeniden bağlanıyor…</span>' +
+      (long ? '<button class="btn btn-mini" data-a="takeover">Yönetimi devral</button>' : '') +
       '</div>'
     );
   }
@@ -661,45 +735,48 @@
 
   function vRoom() {
     const mine = me();
-    const slots = [0, 1]
+    const rows = [0, 1]
       .map((i) => {
         const p = S.players[i];
-        if (!p) return '<div class="slot empty"><div class="slot-av pulse">❔</div><div class="slot-name">Arkadaşın bekleniyor…</div><div class="muted small">Linki gönder 👇</div></div>';
+        if (!p)
+          return '<div class="player-row empty"><span class="av av-empty">' + ic('user') + '</span><div class="pr-body"><b>Diğer oyuncu bekleniyor</b><small>Davet linkini gönder</small></div><span class="spinner-sm"></span></div>';
         const on = p.id === profile.id || presence[p.id];
+        const tags = (p.id === profile.id ? '<em class="tag">Sen</em>' : '') + (p.id === S.hostId ? '<em class="tag gold">Oda sahibi</em>' : '');
         return (
-          '<div class="slot' + (p.ready ? ' ready' : '') + '"><div class="slot-av">' + p.avatar + '</div>' +
-          '<div class="slot-name">' + esc(p.name) + (p.id === profile.id ? ' <small>(sen)</small>' : '') + (p.id === S.hostId ? ' <small>👑 oda sahibi</small>' : '') + '</div>' +
-          '<div class="conn ' + (on ? 'on' : 'off') + '">' + (on ? '● bağlı' : '● yeniden bağlanıyor') + '</div>' +
-          '<div class="ready-tag">' + (p.ready ? '✅ Hazır' : '⏳ Hazırlanıyor') + '</div></div>'
+          '<div class="player-row' + (p.ready ? ' ready' : '') + '">' + av(p, 'av-md') +
+          '<div class="pr-body"><b>' + esc(p.name) + '</b><div class="pr-meta"><small class="' + (on ? 'ok' : 'warn') + '">' + (on ? 'Bağlı' : 'Yeniden bağlanıyor…') + '</small>' + tags + '</div></div>' +
+          '<span class="state ' + (p.ready ? 'ok' : '') + '">' + (p.ready ? ic('check', 'ico-xs') + 'Hazır' : 'Bekliyor') + '</span></div>'
         );
       })
       .join('');
+    const waLink = 'https://wa.me/?text=' + encodeURIComponent('Parti Sarayı’na davetlisin! Oda kodu: ' + S.code + '\n' + inviteLink());
     return (
       '<section class="panel room-code">' +
       '<div class="lbl">Oda kodu</div>' +
-      '<div class="code-big" data-a="copyCode">' + esc(S.code) + '</div>' +
+      '<button class="code-big" data-a="copyCode" aria-label="Linki kopyala">' + esc(S.code) + '</button>' +
       '<div class="row">' +
-      '<button class="btn btn-primary" data-a="share">📤 Davet et</button>' +
-      '<a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent('🎉 Parti Sarayı’na davetlisin! Oda kodu: ' + S.code + '\n' + inviteLink()) + '">💬 WhatsApp</a>' +
-      '</div></section>' +
-      '<section class="slots">' + slots + '</section>' +
+      '<a class="btn btn-wa" target="_blank" rel="noopener" href="' + waLink + '">' + ic('chat') + 'WhatsApp</a>' +
+      '<button class="btn btn-ghost" data-a="share">' + ic('share') + 'Paylaş</button>' +
+      '</div><p class="muted small center-text">Koda dokunarak linki kopyalayabilirsin.</p></section>' +
+      '<section class="panel players"><div class="lbl">Oyuncular</div>' + rows + '</section>' +
       (mine
-        ? '<button class="btn btn-xl ' + (mine.ready ? 'btn-ghost' : 'btn-primary') + '" data-a="ready">' + (mine.ready ? '↩️ Hazır değilim' : '🙌 Hazırım!') + '</button>'
+        ? '<button class="btn btn-xl ' + (mine.ready ? 'btn-ghost' : 'btn-primary') + '" data-a="ready">' + (mine.ready ? ic('x') + 'Hazır değilim' : ic('check') + 'Hazırım') + '</button>'
         : '<div class="muted center-text">Odaya katılınıyor…</div>') +
-      (S.players.length === 2 && !S.players.every((p) => p.ready) ? '<p class="muted center-text">İkiniz de hazır olunca lobi açılır.</p>' : '') +
-      vSettings() +
-      '<p class="muted center-text small">Görüntülü ya da sesli görüşmeyi WhatsApp’tan açık tutun 📞</p>'
+      (S.players.length === 2 && !S.players.every((p) => p.ready) ? '<p class="muted center-text small">İkiniz de hazır olunca oyun seçimi açılır.</p>' : '') +
+      vSettings()
     );
   }
 
   function vSettings() {
     const can = isLocal() || isHost();
-    const chip = (key, v, cur, label) =>
-      '<button class="chip' + (v === cur ? ' on' : '') + '" ' + (can ? 'data-a="set" data-k="' + key + '" data-v="' + v + '"' : 'disabled') + '>' + label + '</button>';
+    const seg = (key, vals, cur) =>
+      '<div class="seg">' +
+      vals.map((v) => '<button class="seg-btn' + (v === cur ? ' on' : '') + '" ' + (can ? 'data-a="set" data-k="' + key + '" data-v="' + v + '"' : 'disabled') + '>' + v + '</button>').join('') +
+      '</div>';
     return (
-      '<section class="panel settings">' +
-      '<div class="set-row"><span>🎯 Hedef puan</span><div class="chips">' + [3, 5, 10, 15].map((v) => chip('target', v, S.target, v)).join('') + '</div></div>' +
-      '<div class="set-row"><span>🔁 Oyun başına tur</span><div class="chips">' + [4, 6, 8, 10].map((v) => chip('rounds', v, S.rounds, v)).join('') + '</div></div>' +
+      '<section class="panel settings"><div class="lbl">Ayarlar</div>' +
+      '<div class="set-row"><span>' + ic('target', 'ico-sm') + 'Hedef puan</span>' + seg('target', [3, 5, 10, 15], S.target) + '</div>' +
+      '<div class="set-row"><span>' + ic('repeat', 'ico-sm') + 'Oyun başına tur</span>' + seg('rounds', [4, 6, 8, 10], S.rounds) + '</div>' +
       (can ? '' : '<div class="muted small">Ayarları oda sahibi değiştirebilir.</div>') +
       '</section>'
     );
@@ -713,23 +790,25 @@
       return (
         '<div class="gcard' + (open ? ' open' : '') + '" style="--c:' + g.color + '">' +
         '<button class="gcard-head" data-a="openGame" data-g="' + g.id + '">' +
-        '<span class="g-ico">' + g.icon + '</span><span class="g-txt"><b>' + esc(g.name) + '</b><small>' + esc(g.short) + '</small></span>' +
-        (count ? '<span class="g-badge">✓' + (count > 1 ? count : '') + '</span>' : '') +
+        '<span class="g-ico">' + gIco(g) + '</span><span class="g-txt"><b>' + esc(g.name) + '</b><small>' + esc(g.short) + '</small></span>' +
+        (count ? '<span class="g-badge">' + ic('check', 'ico-xs') + (count > 1 ? count : '') + '</span>' : '') +
+        ic('chevron', 'chev') +
         '</button>' +
         (open
-          ? '<div class="gcard-body"><p>' + esc(g.desc) + '</p><div class="muted small">🔁 ' + S.rounds + ' tur' + (g.timer ? ' • ⏱ ' + g.timer + ' sn' : '') + ' • 🎟️ kişi başı 1 pas</div>' +
-            '<button class="btn btn-primary" data-a="pickGame" data-g="' + g.id + '">▶️ Başlat</button></div>'
+          ? '<div class="gcard-body"><p>' + esc(g.desc) + '</p>' +
+            '<div class="meta"><span>' + ic('repeat', 'ico-xs') + S.rounds + ' tur</span>' + (g.timer ? '<span>' + ic('timer', 'ico-xs') + g.timer + ' sn</span>' : '') + '<span>' + ic('ticket', 'ico-xs') + '1 pas hakkı</span></div>' +
+            '<button class="btn btn-primary" data-a="pickGame" data-g="' + g.id + '">' + ic('play') + 'Başlat</button></div>'
           : '') +
         '</div>'
       );
     }).join('');
     return (
       vScore() +
-      (S.last ? '<div class="last">Son tur: ' + (S.last.winner ? nameOf(S.last.winner) + ' +' + S.last.pts : 'puan yok') + (S.last.note ? ' • ' + esc(S.last.note) : '') + '</div>' : '') +
-      '<h2 class="h2">🕹️ Oyununu seç</h2>' +
+      (S.last ? '<div class="last">' + ic('history', 'ico-xs') + 'Son tur: ' + (S.last.winner ? nameOfPlain(S.last.winner) + ' +' + S.last.pts : 'puan yok') + '</div>' : '') +
+      '<h2 class="h2">Oyununu seç</h2>' +
       '<section class="games">' + cards + '</section>' +
       vSettings() +
-      '<button class="btn btn-ghost" data-a="finish">🏁 Geceyi bitir, tacı ver 👑</button>' +
+      '<button class="btn btn-ghost" data-a="finish">' + ic('flag') + 'Geceyi bitir, tacı ver</button>' +
       vSchedule()
     );
   }
@@ -743,25 +822,26 @@
 
     if (!card) {
       if (g.id === 'cark') {
-        main = vWheel(null) + (myTurn ? '<button class="btn btn-primary btn-xl" data-a="draw">🎡 Çarkı Çevir</button>' : '<div class="waiting">' + nameOf(tp.id) + ' çarkı çeviriyor…</div>');
+        main = vWheel(null) + (myTurn ? '<button class="btn btn-primary btn-xl" data-a="draw">' + ic('wheel') + 'Çarkı çevir</button>' : '<div class="waiting">' + nameOfPlain(tp.id) + ' çarkı çeviriyor…</div>');
       } else {
         main =
-          '<div class="deck" ' + (myTurn ? 'data-a="draw"' : '') + ' style="--c:' + g.color + '"><div class="deck-card"><span>' + g.icon + '</span><b>Parti Sarayı</b></div><div class="deck-card b2"></div><div class="deck-card b3"></div></div>' +
-          (myTurn ? '<button class="btn btn-primary btn-xl" data-a="draw">🃏 Kart Çek</button>' : '<div class="waiting">' + nameOf(tp.id) + ' kart çekiyor…</div>');
+          '<div class="deck" ' + (myTurn ? 'data-a="draw"' : '') + ' style="--c:' + g.color + '"><div class="deck-card">' + CROWN + '<b>Parti Sarayı</b></div><div class="deck-card b2"></div><div class="deck-card b3"></div></div>' +
+          (myTurn ? '<button class="btn btn-primary btn-xl" data-a="draw">' + ic('cards') + 'Kart çek</button>' : '<div class="waiting">' + nameOfPlain(tp.id) + ' kart çekiyor…</div>');
       }
     } else {
       const spinning = g.id === 'cark' && card.wheel != null && !card.isPass && ui.spun[card.id] !== true;
-      main = (g.id === 'cark' && card.wheel != null && !card.isPass ? vWheel(card) : '') + (spinning ? '<div class="waiting">Çark dönüyor… 🌀</div>' : vCard(g, card, tp, myTurn));
+      main = (g.id === 'cark' && card.wheel != null && !card.isPass ? vWheel(card) : '') + (spinning ? '<div class="waiting">Çark dönüyor…</div>' : vCard(g, card, tp, myTurn));
     }
 
+    const turnTxt = tp ? (!isLocal() && tp.id === profile.id ? 'Sıra sende' : 'Sıra ' + esc(tp.name) + '’de') : '';
     return (
       vScore(true) +
-      '<div class="game-title" style="--c:' + g.color + '"><span>' + g.icon + ' ' + esc(g.name) + '</span><span class="round">Tur ' + Math.min(S.gameRound, S.rounds) + '/' + S.rounds + '</span></div>' +
-      '<div class="turn-line">' + (tp ? (isLocal() ? 'Sıra: <b>' + nameOf(tp.id) + '</b>' : tp.id === profile.id ? '👉 <b>Sıra sende!</b>' : 'Sıra: <b>' + nameOf(tp.id) + '</b>') : '') + '</div>' +
+      '<div class="game-title" style="--c:' + g.color + '"><span class="g-ico sm">' + gIco(g) + '</span><b>' + esc(g.name) + '</b><span class="round">' + Math.min(S.gameRound, S.rounds) + ' / ' + S.rounds + '</span></div>' +
+      (tp ? '<div class="turn-line' + (!isLocal() && tp.id === profile.id ? ' mine' : '') + '">' + av(tp, 'av-sm') + '<span>' + turnTxt + '</span></div>' : '') +
       '<section class="play-area">' + main + '</section>' +
       '<div class="row foot-actions">' +
-      '<button class="btn btn-mini btn-ghost" data-a="rules">ℹ️ Kurallar</button>' +
-      '<button class="btn btn-mini btn-ghost" data-a="endGame">⏹ Lobiye dön</button>' +
+      '<button class="btn btn-mini btn-ghost" data-a="rules">' + ic('info', 'ico-sm') + 'Kurallar</button>' +
+      '<button class="btn btn-mini btn-ghost" data-a="endGame">' + ic('back', 'ico-sm') + 'Oyun listesi</button>' +
       '</div>'
     );
   }
@@ -770,11 +850,11 @@
     const n = WHEEL.length;
     const seg = 360 / n;
     const grad = WHEEL.map((w, i) => w.color + ' ' + i * seg + 'deg ' + (i + 1) * seg + 'deg').join(',');
-    const labels = WHEEL.map((w, i) => '<span class="wl" style="transform:rotate(' + (i * seg + seg / 2) + 'deg) translateY(calc(min(78vw, 300px) * -0.34)) rotate(' + -(i * seg + seg / 2) + 'deg)">' + w.icon + '</span>').join('');
+    const labels = WHEEL.map((w, i) => '<span class="wl" style="transform:rotate(' + (i * seg + seg / 2) + 'deg) translateY(calc(min(76vw, 290px) * -0.34)) rotate(' + -(i * seg + seg / 2) + 'deg)">' + w.icon + '</span>').join('');
     return (
-      '<div class="wheel-wrap' + (card && ui.spun[card.id] === true ? ' mini' : '') + '"><div class="wheel-pointer">▼</div><div id="wheel" class="wheel" data-card="' + (card ? card.id : '') + '" data-w="' + (card ? card.wheel : '') + '" style="background:conic-gradient(' + grad + ')">' +
+      '<div class="wheel-wrap' + (card && ui.spun[card.id] === true ? ' mini' : '') + '"><div class="wheel-pointer"></div><div id="wheel" class="wheel" data-card="' + (card ? card.id : '') + '" data-w="' + (card ? card.wheel : '') + '" style="background:conic-gradient(' + grad + ')">' +
       labels +
-      '</div><div class="wheel-hub">🎡</div></div>'
+      '</div><div class="wheel-hub">' + CROWN + '</div></div>'
     );
   }
 
@@ -785,52 +865,53 @@
     const pts = card.points || 1;
     const R = (winner, label, cls, note) =>
       '<button class="btn ' + (cls || 'btn-secondary') + '" data-a="result" data-w="' + (winner || '') + '" data-n="' + esc(note || '') + '">' + label + '</button>';
+    const wait = (icon, html) => '<div class="judge-wait">' + ic(icon, 'ico-sm') + '<span>' + html + '</span></div>';
 
     if (card.isPass) {
-      return '<div class="judge">' + R(null, '✔️ Tamam, sıra geçsin', 'btn-primary', 'Pas kullanıldı') + '</div>';
+      return '<div class="judge">' + R(null, ic('check') + 'Tamam, sıra geçsin', 'btn-primary', 'Pas kullanıldı') + '</div>';
     }
     switch (g.judge) {
       case 'performer':
-        if (!local && iAmTurn) return '<div class="judge-wait">⚖️ Görevi yap! Kararı <b>' + nameOf(o.id) + '</b> verecek.</div>';
+        if (!local && iAmTurn) return wait('info', 'Görevi yap. Kararı <b>' + nameOfPlain(o.id) + '</b> verecek.');
         return (
-          '<div class="judge"><div class="judge-q">' + (local ? 'Karar ' + nameOf(o.id) + '’de:' : nameOf(tp.id) + ' görevi başardı mı?') + '</div>' +
-          '<div class="row">' + R(tp.id, '✅ Başardı +' + pts, 'btn-success', 'Görev başarıldı') + R(null, '❌ Olmadı', 'btn-danger', 'Görev yarım kaldı') + '</div></div>'
+          '<div class="judge"><div class="judge-q">' + (local ? 'Kararı ' + nameOfPlain(o.id) + ' versin:' : nameOfPlain(tp.id) + ' görevi başardı mı?') + '</div>' +
+          '<div class="row">' + R(tp.id, ic('check') + 'Başardı +' + pts, 'btn-success', 'Görev başarıldı') + R(null, ic('x') + 'Olmadı', 'btn-danger', 'Görev yarım kaldı') + '</div></div>'
         );
       case 'laugh':
         return (
-          '<div class="judge"><div class="judge-q">Süre bitmeden ' + nameOf(o.id) + ' güldü mü?</div><div class="row">' +
-          R(tp.id, '😂 Güldü! (' + esc(tp.name) + ' +1)', 'btn-success', 'Kahkaha geldi') +
-          R(o.id, '😐 Dayandı (' + esc(o.name) + ' +1)', 'btn-secondary', 'Taş gibi dayandı') +
+          '<div class="judge"><div class="judge-q">Süre bitmeden ' + nameOfPlain(o.id) + ' güldü mü?</div><div class="row">' +
+          R(tp.id, 'Güldü · ' + esc(tp.name) + ' +1', 'btn-success', 'Kahkaha geldi') +
+          R(o.id, 'Dayandı · ' + esc(o.name) + ' +1', 'btn-secondary', 'Taş gibi dayandı') +
           '</div></div>'
         );
       case 'banned':
         return (
           '<div class="judge"><div class="judge-q">Yasaklı kelimeyi kim söyledi?</div><div class="row">' +
-          S.players.map((p) => R(S.players.find((x) => x.id !== p.id).id, '🚫 ' + esc(p.name) + ' söyledi', 'btn-danger', p.name + ' yasaklı kelimeyi söyledi')).join('') +
-          '</div>' + R(null, '🤝 Kimse kaçırmadı', 'btn-ghost', 'İkisi de dikkatliydi') + '</div>'
+          S.players.map((p) => R(S.players.find((x) => x.id !== p.id).id, ic('ban') + esc(p.name), 'btn-danger', p.name + ' yasaklı kelimeyi söyledi')).join('') +
+          '</div>' + R(null, 'Kimse söylemedi', 'btn-ghost', 'İkisi de dikkatliydi') + '</div>'
         );
       case 'either':
         return (
           '<div class="judge"><div class="judge-q">Bu turu kim kazandı?</div><div class="row">' +
-          S.players.map((p) => R(p.id, '🏆 ' + esc(p.name), 'btn-success', 'Bonus turu kazandı')).join('') +
-          '</div>' + R(null, '🤝 Berabere', 'btn-ghost', 'Berabere') + '</div>'
+          S.players.map((p) => R(p.id, ic('trophy') + esc(p.name), 'btn-success', 'Bonus turu kazandı')).join('') +
+          '</div>' + R(null, 'Berabere', 'btn-ghost', 'Berabere') + '</div>'
         );
       case 'liar': {
-        const btn = (a, i, label, cls) => '<button class="btn ' + cls + '" data-a="' + a + '" data-i="' + i + '">' + label + '</button>';
+        const btn = (a, i, cls) => '<button class="btn ' + cls + '" data-a="' + a + '" data-i="' + i + '">' + (i + 1) + '. hikâye</button>';
         if (S.secret === null) {
           if (local || iAmTurn) {
             return (
-              '<div class="judge"><div class="judge-q">' + (local ? nameOf(tp.id) + ', ' : '') + '3 hikâyeyi anlat. Uydurma olanı <b>gizlice</b> seç:</div>' +
-              (local ? '<div class="muted small">(' + esc(o.name) + ' ekrana bakmasın 🙈)</div>' : '') +
-              '<div class="row three">' + [0, 1, 2].map((i) => btn('secret', i, (i + 1) + '. hikâye', 'btn-secondary')).join('') + '</div></div>'
+              '<div class="judge"><div class="judge-q">' + (local ? esc(tp.name) + ', ' : '') + 'üç hikâyeyi anlat ve uydurma olanı <b>gizlice</b> seç.</div>' +
+              (local ? '<div class="muted small center-text">' + ic('eyeoff', 'ico-xs') + ' ' + esc(o.name) + ' ekrana bakmasın</div>' : '') +
+              '<div class="row three">' + [0, 1, 2].map((i) => btn('secret', i, 'btn-secondary')).join('') + '</div></div>'
             );
           }
-          return '<div class="judge-wait">🎙️ ' + nameOf(tp.id) + ' üç hikâye anlatacak. Dikkatle dinle, sonra yalanı tahmin et!</div>';
+          return wait('mic', nameOfPlain(tp.id) + ' üç hikâye anlatacak. Dinle, sonra uydurmayı tahmin et.');
         }
-        if (!local && iAmTurn) return '<div class="judge-wait">🔒 Seçimin kilitlendi. ' + nameOf(o.id) + ' tahmin ediyor…</div>';
+        if (!local && iAmTurn) return wait('lock', 'Seçimin kilitlendi. ' + nameOfPlain(o.id) + ' tahmin ediyor…');
         return (
-          '<div class="judge"><div class="judge-q">🔒 Seçim yapıldı. ' + (local ? nameOf(o.id) + ', sence' : 'Sence') + ' hangisi uydurma?</div>' +
-          '<div class="row three">' + [0, 1, 2].map((i) => btn('guess', i, (i + 1) + '. hikâye', 'btn-primary')).join('') + '</div></div>'
+          '<div class="judge"><div class="judge-q">' + ic('lock', 'ico-xs') + ' ' + (local ? esc(o.name) + ', sence' : 'Sence') + ' hangisi uydurma?</div>' +
+          '<div class="row three">' + [0, 1, 2].map((i) => btn('guess', i, 'btn-primary')).join('') + '</div></div>'
         );
       }
     }
@@ -840,32 +921,31 @@
   function vCard(g, card, tp, myTurn) {
     const timerDur = g.timer || 0;
     const words = card.words
-      ? '<div class="banned"><div class="banned-title">YASAKLI KELİMELER</div>' + card.words.map((w) => '<span>' + esc(w) + '</span>').join('') + '</div>'
+      ? '<div class="banned"><div class="banned-title">Yasaklı kelimeler</div>' + card.words.map((w) => '<span>' + esc(w) + '</span>').join('') + '</div>'
       : '';
     const canPass = !card.isPass && tp && !S.passes[tp.id] && (isLocal() || tp.id === profile.id) && g.judge !== 'either';
-    const passLeft = tp && !S.passes[tp.id];
     let timer = '';
-    if (!card.isPass && (timerDur || g.id === 'sans' || g.id === 'cark' || g.id === 'bonus')) {
+    if (!card.isPass && (timerDur || g.id === 'sans' || g.id === 'cark' || g.id === 'bonus' || g.id === 'kralice')) {
       if (S.timer) {
         timer = '<div class="timer" id="timer" data-id="' + S.timer.id + '" data-dur="' + S.timer.dur + '"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" class="tr-bg"/><circle cx="22" cy="22" r="19" class="tr-fg" id="timerRing"/></svg><b id="timerNum">' + S.timer.dur + '</b></div>';
       } else {
         const d = timerDur || 30;
-        timer = '<button class="btn btn-timer" data-a="timer" data-d="' + d + '">⏱ ' + d + ' sn başlat</button>';
+        timer = '<button class="btn btn-timer" data-a="timer" data-d="' + d + '">' + ic('timer', 'ico-sm') + d + ' sn sayaç</button>';
       }
     }
     return (
       '<div class="card pop' + (card.isPass ? ' pass' : '') + '" style="--c:' + g.color + '" data-cid="' + card.id + '">' +
-      '<div class="card-top"><span class="cat">' + esc(card.cat) + '</span>' + (card.points > 1 ? '<span class="pts">👑 ' + card.points + ' puan</span>' : '') + '</div>' +
+      '<div class="card-top"><span class="cat">' + esc(card.cat) + '</span>' + (card.points > 1 ? '<span class="pts">' + ic('crown', 'ico-xs') + card.points + ' puan</span>' : '') + '</div>' +
       '<div class="card-text">' + esc(card.text) + '</div>' +
       words +
-      (g.id === 'dogru' && !card.isPass ? '<div class="muted small">İkisi gerçek, biri uydurma! 🤥</div>' : '') +
+      (g.id === 'dogru' && !card.isPass ? '<div class="card-note">İkisi gerçek, biri uydurma.</div>' : '') +
       '</div>' +
-      (timer ? '<div class="timer-row">' + timer + (S.timer ? '<button class="btn btn-mini btn-ghost" data-a="timer" data-d="' + S.timer.dur + '">↻</button>' : '') + '</div>' : '') +
+      (timer ? '<div class="timer-row">' + timer + (S.timer ? '<button class="icon-btn" data-a="timer" data-d="' + S.timer.dur + '" aria-label="Sayacı yeniden başlat">' + ic('refresh') + '</button>' : '') + '</div>' : '') +
       judgeBtns(g, card, tp) +
       '<div class="row card-actions">' +
-      (!card.isPass && S.guess === null && S.secret === null ? '<button class="btn btn-mini btn-ghost" data-a="change">🔄 Kartı değiştir</button>' : '') +
-      (canPass ? '<button class="btn btn-mini btn-ghost" data-a="pass">🎟️ Pas (' + (passLeft ? '1' : '0') + ' hak)</button>' : '') +
-      (!card.isPass && tp && S.passes[tp.id] && (isLocal() || tp.id === profile.id) ? '<span class="muted small">🎟️ Pas hakkı kullanıldı</span>' : '') +
+      (!card.isPass && S.guess === null && S.secret === null ? '<button class="btn btn-mini btn-ghost" data-a="change">' + ic('refresh', 'ico-sm') + 'Kartı değiştir</button>' : '') +
+      (canPass ? '<button class="btn btn-mini btn-ghost" data-a="pass">' + ic('ticket', 'ico-sm') + 'Pas geç (1 hak)</button>' : '') +
+      (!card.isPass && tp && S.passes[tp.id] && (isLocal() || tp.id === profile.id) ? '<span class="muted small">Pas hakkı kullanıldı</span>' : '') +
       '</div>'
     );
   }
@@ -873,57 +953,61 @@
   function vTiebreak() {
     return (
       vScore() +
-      '<div class="tie-title">⚔️ BERABERLİK!</div>' +
-      '<div class="card pop" style="--c:#f5d142"><div class="card-top"><span class="cat">Final düellosu</span></div><div class="card-text">' + esc(S.card.text) + '</div></div>' +
+      '<div class="tie-title">' + ic('swords') + 'Beraberlik</div>' +
+      '<div class="card pop" style="--c:#d9a032"><div class="card-top"><span class="cat">Final düellosu</span></div><div class="card-text">' + esc(S.card.text) + '</div></div>' +
       '<div class="judge"><div class="judge-q">Düelloyu kim kazandı?</div><div class="row">' +
-      S.players.map((p) => '<button class="btn btn-success" data-a="tiebreak" data-w="' + p.id + '">👑 ' + esc(p.name) + '</button>').join('') +
+      S.players.map((p) => '<button class="btn btn-primary" data-a="tiebreak" data-w="' + p.id + '">' + ic('crown') + esc(p.name) + '</button>').join('') +
       '</div></div>'
     );
   }
 
   function crownTitle(p) {
-    if (!p) return 'SARAYIN SAHİBİ';
+    if (!p) return 'Sarayın Sahibi';
     const n = p.name.toLocaleLowerCase('tr');
-    if (n.includes('ceyda') || p.avatar === '👸') return 'KRALİÇE CEYDA';
-    if (n.includes('semih') || p.avatar === '🤴') return 'KRAL SEMİH';
-    return 'SARAYIN SAHİBİ';
+    if (n.includes('ceyda') || p.avatar === '👸') return 'Kraliçe Ceyda';
+    if (n.includes('semih') || p.avatar === '🤴') return 'Kral Semih';
+    return 'Sarayın Sahibi';
   }
 
   function vFinal() {
     const w = P(S.winner);
     const sorted = S.players.slice().sort((a, b) => b.score - a.score);
-    const iWon = w && w.id === profile.id && !isLocal();
+    const iWon = w && w.id === profile.id;
+    const title = crownTitle(w);
+    const sub = isLocal() || iWon
+      ? title === 'Kraliçe Ceyda' ? 'Taç yine kraliçede.' : title === 'Kral Semih' ? 'Bu gece taç Semih’te.' : 'Gecenin tacı sende.'
+      : 'Bu gece taç onda. Rövanş?';
     return (
       '<section class="final">' +
-      '<div class="crown">👑</div>' +
-      '<div class="boss-label">' + crownTitle(w) + '</div><div class="boss-tag">Gecenin Party Boss’u</div>' +
-      '<div class="boss-av">' + (w ? w.avatar : '🎉') + '</div>' +
-      '<div class="boss-name">' + (w ? esc(w.name) : '') + '</div>' +
-      '<div class="boss-sub">' + (iWon || isLocal() ? (crownTitle(w) === 'KRALİÇE CEYDA' ? 'Taç yine kraliçede! Sarayın kraliçesi 👸' : crownTitle(w) === 'KRAL SEMİH' ? 'Bu gece taç Semih’te! Sarayın kralı 🤴' : 'Gecenin tacı sende! 🎉') : isLocal() ? 'Tebrikler! 🎉' : 'Bu gece taç onda… rövanş? 😏') + '</div>' +
-      '<div class="final-scores">' + sorted.map((p, i) => '<div class="fs"><span>' + (i === 0 ? '🥇' : '🥈') + ' ' + p.avatar + ' ' + esc(p.name) + '</span><b>' + p.score + '</b></div>').join('') + '</div>' +
-      '<div class="muted small">' + S.totalRound + ' tur oynandı • ' + (S.gamesPlayed || []).length + ' oyun</div>' +
+      '<div class="final-crown">' + CROWN + '</div>' +
+      '<div class="boss-tag">Gecenin kazananı</div>' +
+      '<div class="boss-label">' + esc(title) + '</div>' +
+      '<div class="boss-av">' + av(w, 'av-xl') + '</div>' +
+      '<div class="boss-sub">' + sub + '</div>' +
+      '<div class="final-scores">' + sorted.map((p, i) => '<div class="fs"><span class="rank">' + (i + 1) + '</span>' + av(p, 'av-sm') + '<span class="fs-name">' + esc(p.name) + '</span><b>' + p.score + '</b></div>').join('') + '</div>' +
+      '<div class="muted small">' + S.totalRound + ' tur • ' + (S.gamesPlayed || []).length + ' oyun</div>' +
       '</section>' +
-      '<button class="btn btn-primary btn-xl" data-a="rematch">🔁 Rövanş!</button>' +
-      '<button class="btn btn-ghost" data-a="history">📜 Tur geçmişi</button>' +
-      '<button class="btn btn-ghost" data-a="leave">🏠 ' + (isLocal() ? 'Ana sayfa' : 'Odadan çık') + '</button>'
+      '<button class="btn btn-primary btn-xl" data-a="rematch">' + ic('repeat') + 'Rövanş</button>' +
+      '<div class="row"><button class="btn btn-ghost" data-a="history">' + ic('history') + 'Geçmiş</button>' +
+      '<button class="btn btn-ghost" data-a="leave">' + ic(isLocal() ? 'home' : 'logout') + (isLocal() ? 'Ana sayfa' : 'Çık') + '</button></div>'
     );
   }
 
   function vHistory() {
     const h = (S.history || []).slice().reverse();
     return (
-      '<div class="sheet-backdrop" data-a="history"></div><div class="sheet tall"><h3>📜 Tur geçmişi</h3>' +
+      '<div class="sheet-backdrop" data-a="history"></div><div class="sheet tall"><h3>Tur geçmişi</h3>' +
       (h.length
         ? '<ul class="hist">' +
           h
             .map((e) => {
               const g = G.gameById(e.game);
-              return '<li><span class="h-n">#' + e.n + '</span><span class="h-b"><b>' + (g ? g.icon + ' ' + esc(g.name) : '⚔️ Final') + '</b><small>' + esc(e.text) + '</small>' + (e.note ? '<small class="note">' + esc(e.note) + '</small>' : '') + '</span><span class="h-w">' + (e.winner ? nameOf(e.winner) + ' <b>+' + e.pts + '</b>' : '—') + '</span></li>';
+              return '<li><span class="h-ico">' + (g ? gIco(g) : ic('swords')) + '</span><span class="h-b"><b>' + (g ? esc(g.name) : 'Final düellosu') + '</b><small>' + esc(e.text) + '</small></span><span class="h-w">' + (e.winner ? nameOfPlain(e.winner) + ' <b>+' + e.pts + '</b>' : '—') + '</span></li>';
             })
             .join('') +
           '</ul>'
         : '<p class="muted">Henüz tur oynanmadı.</p>') +
-      '<button class="btn btn-secondary" data-a="history">Kapat</button></div>'
+      '<button class="btn btn-ghost" data-a="history">Kapat</button></div>'
     );
   }
 
@@ -1087,16 +1171,16 @@
       case 'netTest': {
         const box = document.getElementById('netResult');
         if (!window.mqtt) {
-          box.textContent = '❌ Bağlantı kütüphanesi yüklenemedi.';
+          box.textContent = 'Bağlantı kütüphanesi yüklenemedi.';
           break;
         }
-        box.innerHTML = '<div class="muted">⏳ Test ediliyor…</div>';
+        box.innerHTML = '<div class="muted">Test ediliyor…</div>';
         t.disabled = true;
         KhNet.testAll().then((rs) => {
           const okCount = rs.filter((r) => r.ok).length;
           ui.netResult =
-            rs.map((r) => '<div>' + (r.ok ? '✅' : '❌') + ' ' + esc(r.host) + (r.ok ? ' <span class="muted">(' + r.ms + ' ms)</span>' : '') + '</div>').join('') +
-            '<div class="net-sum">' + (okCount ? '🎉 Online oda bu cihazda çalışır (' + okCount + '/' + rs.length + ' sunucu).' : '⚠️ Hiçbir sunucuya ulaşılamadı. Wi-Fi/mobil veri değiştir ya da Tek Telefon modunu kullan.') + '</div>';
+            rs.map((r) => '<div class="net-row ' + (r.ok ? 'ok' : 'bad') + '">' + ic(r.ok ? 'check' : 'x', 'ico-sm') + '<span>' + esc(r.host) + '</span>' + (r.ok ? '<span class="muted">' + r.ms + ' ms</span>' : '') + '</div>').join('') +
+            '<div class="net-sum">' + (okCount ? 'Online oda bu cihazda çalışır (' + okCount + '/' + rs.length + ' sunucu).' : 'Hiçbir sunucuya ulaşılamadı. Wi-Fi ya da mobil veriyi değiştir veya tek telefonda oyna.') + '</div>';
           const b2 = document.getElementById('netResult');
           if (b2) b2.innerHTML = ui.netResult;
           t.disabled = false;
@@ -1157,7 +1241,7 @@
         if (S && S.hostId !== profile.id && room) {
           S = G.reduce(S, { type: 'takeover', by: profile.id });
           room.publishState(S);
-          toast('👑 Oda yönetimi artık sende.');
+          toast('Oda yönetimi artık sende.');
           render();
         }
         break;
@@ -1215,7 +1299,7 @@
         break;
       case 'rules': {
         const g = G.gameById(S.game);
-        showBurst(g.icon + ' ' + esc(g.name), g.desc);
+        showBurst(esc(g.name), g.desc);
         break;
       }
     }
