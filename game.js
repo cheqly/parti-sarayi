@@ -224,18 +224,10 @@
         s.secret = null;
         break;
       }
-      case 'timer': {
-        if (s.phase !== 'play' || !cardOk()) return state;
-        const dur = Math.max(5, Math.min(180, Number(a.dur) || 30));
-        s.seq += 1;
-        s.timer = { id: s.seq, dur, at: Date.now() };
-        break;
-      }
-      case 'stopTimer': {
-        if (!s.timer) return state;
-        s.timer = null;
-        break;
-      }
+      // Oyunlar süresizdir: sayaç aksiyonları yok sayılır.
+      case 'timer':
+      case 'stopTimer':
+        return state;
       case 'secret': {
         // Doğru mu Uydurdum mu: anlatıcı yalanı gizlice işaretler
         if (s.phase !== 'play' || s.game !== 'dogru' || !cardOk() || s.card.isPass) return state;

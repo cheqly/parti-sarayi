@@ -798,7 +798,7 @@
         '</button>' +
         (open
           ? '<div class="gcard-body"><p>' + esc(g.desc) + '</p>' +
-            '<div class="meta"><span>' + ic('repeat', 'ico-xs') + S.rounds + ' tur</span>' + (g.timer ? '<span>' + ic('timer', 'ico-xs') + g.timer + ' sn</span>' : '') + '<span>' + ic('ticket', 'ico-xs') + '1 pas hakkı</span></div>' +
+            '<div class="meta"><span>' + ic('repeat', 'ico-xs') + S.rounds + ' tur</span>' + '<span>' + ic('ticket', 'ico-xs') + '1 pas hakkı</span></div>' +
             '<button class="btn btn-primary" data-a="pickGame" data-g="' + g.id + '">' + ic('play') + 'Başlat</button></div>'
           : '') +
         '</div>'
@@ -881,7 +881,7 @@
         );
       case 'laugh':
         return (
-          '<div class="judge"><div class="judge-q">Süre bitmeden ' + nameOfPlain(o.id) + ' güldü mü?</div><div class="row">' +
+          '<div class="judge"><div class="judge-q">' + nameOfPlain(o.id) + ' güldü mü?</div><div class="row">' +
           R(tp.id, 'Güldü · ' + esc(tp.name) + ' +1', 'btn-success', 'Kahkaha geldi') +
           R(o.id, 'Dayandı · ' + esc(o.name) + ' +1', 'btn-secondary', 'Taş gibi dayandı') +
           '</div></div>'
@@ -921,20 +921,10 @@
   }
 
   function vCard(g, card, tp, myTurn) {
-    const timerDur = g.timer || 0;
     const words = card.words
       ? '<div class="banned"><div class="banned-title">Yasaklı kelimeler</div>' + card.words.map((w) => '<span>' + esc(w) + '</span>').join('') + '</div>'
       : '';
     const canPass = !card.isPass && tp && !S.passes[tp.id] && (isLocal() || tp.id === profile.id) && g.judge !== 'either';
-    let timer = '';
-    if (!card.isPass && (timerDur || g.id === 'sans' || g.id === 'cark' || g.id === 'bonus' || g.id === 'kralice')) {
-      if (S.timer) {
-        timer = '<div class="timer" id="timer" data-id="' + S.timer.id + '" data-dur="' + S.timer.dur + '"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" class="tr-bg"/><circle cx="22" cy="22" r="19" class="tr-fg" id="timerRing"/></svg><b id="timerNum">' + S.timer.dur + '</b></div>';
-      } else {
-        const d = timerDur || 30;
-        timer = '<button class="btn btn-timer" data-a="timer" data-d="' + d + '">' + ic('timer', 'ico-sm') + d + ' sn sayaç</button>';
-      }
-    }
     return (
       '<div class="card pop' + (card.isPass ? ' pass' : '') + '" style="--c:' + g.color + '" data-cid="' + card.id + '">' +
       '<div class="card-top"><span class="cat">' + esc(card.cat) + '</span>' + (card.points > 1 ? '<span class="pts">' + ic('crown', 'ico-xs') + card.points + ' puan</span>' : '') + '</div>' +
@@ -942,8 +932,7 @@
       words +
       (g.id === 'dogru' && !card.isPass ? '<div class="card-note">İkisi gerçek, biri uydurma.</div>' : '') +
       '</div>' +
-      (timer ? '<div class="timer-row">' + timer + (S.timer ? '<button class="icon-btn" data-a="timer" data-d="' + S.timer.dur + '" aria-label="Sayacı yeniden başlat">' + ic('refresh') + '</button>' : '') + '</div>' : '') +
-      judgeBtns(g, card, tp) +
+            judgeBtns(g, card, tp) +
       '<div class="row card-actions">' +
       (!card.isPass && S.guess === null && S.secret === null ? '<button class="btn btn-mini btn-ghost" data-a="change">' + ic('refresh', 'ico-sm') + 'Kartı değiştir</button>' : '') +
       (canPass ? '<button class="btn btn-mini btn-ghost" data-a="pass">' + ic('ticket', 'ico-sm') + 'Pas geç (1 hak)</button>' : '') +

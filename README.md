@@ -21,9 +21,9 @@ Sesli/görüntülü konuşma için WhatsApp ya da telefon görüşmesini açık 
 | Oyun | Kısaca |
 |---|---|
 | 🎲 Şans mı, Rezillik mi? | Dans, taklit, reklam, şarkı, doğaçlama görevleri. Kişi başı 1 pas hakkı. |
-| 😂 30 Saniyede Beni Güldür | 30 sn sayaç; güldüren ya da dayanan puanı alır. |
+| 😂 Beni Güldür | Güldüren ya da dayanan puanı alır. |
 | 🕵️ Doğru mu, Uydurdum mu? | 3 hikâye, 1’i yalan. Anlatıcı yalanı gizlice işaretler, rakip tahmin eder. |
-| 🚫 Yasaklı Kelime | 60 sn sohbet; yasaklı kelimeyi söyleyen turu kaybeder. |
+| 🚫 Yasaklı Kelime | Sohbet edin; yasaklı kelimeyi söyleyen turu kaybeder. |
 | 🎡 Kader Çarkı | Animasyonlu çark 8 kategoriden birini seçer. 👑 Kraliyet görevi 2 puan. |
 | 👸 Kraliçenin Fermanı | Saraydan fermanlar; 👑 büyük fermanlar 2 puan. |
 | ⚡ Bonus Görevler | Şarkı tahmini, emojiyle anlatım, ters röportaj, hayalî restoran… |
