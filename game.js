@@ -48,6 +48,7 @@
   const idx = (s, id) => s.players.findIndex((p) => p.id === id);
   const other = (s, id) => s.players.find((p) => p.id !== id);
   const turnPlayer = (s) => s.players[s.turn] || null;
+  const queenOf = (s) => s.players.find((p) => /ceyda/i.test(p.name) || String(p.avatar || '').startsWith('👸')) || null;
 
   function pickFrom(s, pool, key, filter) {
     const list = CARDS[pool];
@@ -75,6 +76,22 @@
       card.cat = c.t;
       card.text = c.x;
       card.points = c.p || 1;
+    } else if (g === 'defter') {
+      const c = pickFrom(s, 'defter', 'defter');
+      const opts = c.a.map((t, i) => ({ t, ok: i === 0 }));
+      for (let i = opts.length - 1; i > 0; i--) {
+        const j = rnd(i + 1);
+        [opts[i], opts[j]] = [opts[j], opts[i]];
+      }
+      const queen = queenOf(s);
+      const tp = turnPlayer(s);
+      const answerer = queen ? other(s, queen.id) : tp;
+      card.cat = 'Soru';
+      card.text = c.q;
+      card.opts = opts.map((o) => o.t);
+      card.ans = opts.findIndex((o) => o.ok);
+      card.answerer = answerer ? answerer.id : null;
+      card.queen = queen ? queen.id : null;
     } else {
       const c = pickFrom(s, g, g);
       card.cat = c.t;
@@ -280,6 +297,18 @@
           s.phase = 'final';
           s.winner = p1.score > p2.score ? p1.id : p2.id;
         }
+        break;
+      }
+      case 'answer': {
+        // Beyaz Kaplı Defter: kraliçenin rakibi cevaplar
+        if (s.phase !== 'play' || s.game !== 'defter' || !cardOk() || !s.card.opts) return state;
+        if (!local && by !== s.card.answerer) return state;
+        if (![0, 1, 2, 3].includes(a.idx)) return state;
+        const right = a.idx === s.card.ans;
+        const ansId = s.card.answerer;
+        const correct = s.card.opts[s.card.ans];
+        const loserPrize = s.card.queen || (other(s, ansId) || {}).id;
+        settle(s, right ? ansId : loserPrize, 1, right ? 'Doğru! Kraliçeyi iyi tanıyor 💜' : 'Yanlış! Doğru cevap: ' + correct);
         break;
       }
       case 'tiebreak': {

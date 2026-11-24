@@ -63,6 +63,16 @@ window.KH_GAMES = [
     color: '#e0245e'
   },
   {
+    id: 'defter',
+    icon: '📒',
+    name: 'Beyaz Kaplı Defter',
+    short: 'Kraliçeyi ne kadar tanıyorsun?',
+    desc: 'Kraliçe Ceyda hakkında sorular. Cevabı kraliçenin rakibi verir: doğru bilirse +1, bilemezse puan kraliçeye gider!',
+    judge: 'quiz',
+    timer: 0,
+    color: '#b48cff'
+  },
+  {
     id: 'bonus',
     icon: '⚡',
     name: 'Bonus Görevler',
@@ -145,6 +155,9 @@ window.KH_CARDS = {
     { t: 'Konu', x: 'Rüyanda gördüğün üç tuhaf şey' },
     { t: 'Konu', x: 'Hayatında yaptığın üç yemek denemesi' },
     { t: 'Konu', x: 'Bursa ya da Tekirdağ’da başına gelen üç olay' },
+    { t: 'Konu', x: 'Bir hayvanla (belki bir muhabbet kuşuyla) ilgili üç anı' },
+    { t: 'Konu', x: 'İzlediğin Japon ya da Kore dizileriyle ilgili üç şey' },
+    { t: 'Konu', x: 'Örgü, yemek ya da el işiyle ilgili üç deneyim' },
     { t: 'Konu', x: 'Semih ile Ceyda’nın tanıdığı biri hakkında üç hikâye' },
     { t: 'Konu', x: 'Bir yolculukta (otobüs, araba, vapur) yaşadığın üç şey' }
   ],
@@ -167,6 +180,10 @@ window.KH_CARDS = {
     { t: 'Bursa', x: 'Bursa’da bir gün geçirin: nereye gidersiniz, ne yersiniz?', w: ['iskender', 'uludağ', 'bursa'] },
     { t: 'Tekirdağ', x: 'Tekirdağ’da bir hafta sonu planlayın.', w: ['köfte', 'deniz', 'tekirdağ'] },
     { t: 'Saray', x: 'Bir sarayda yaşasanız gününüz nasıl geçerdi?', w: ['kraliçe', 'saray', 'taç'] },
+    { t: 'Kara Kaplı Defter', x: 'Saray için bir akşam yemeği menüsü hazırlayın.', w: ['balık', 'soda', 'et'] },
+    { t: 'Kahve keyfi', x: 'Mükemmel bir Türk kahvesi sohbeti yapın.', w: ['kahve', 'şeker', 'fincan'] },
+    { t: 'Nohut', x: 'Nohut’un bir gününü anlatın.', w: ['kuş', 'kafes', 'yem'] },
+    { t: 'Dizi gecesi', x: 'Birlikte izlenecek bir Japon ya da Kore dizisi seçin.', w: ['dizi', 'bölüm', 'kore'] },
     { t: 'Yol gezisi', x: 'Bursa’dan Tekirdağ’a bir yol gezisi planlayın.', w: ['araba', 'yol', 'mola'] }
   ],
 
@@ -212,6 +229,9 @@ window.KH_CARDS = {
     { t: 'Ürün icadı', x: 'İkiniz de saçma bir icat tanıtın. Daha ikna edici olan kazanır.' },
     { t: 'Hikâye zinciri', x: 'Sırayla birer kelime ekleyerek hikâye kurun. Anlamsızlaştıran kaybeder 😄' },
     { t: 'Kategori', x: 'Kategori: Şehirler. Sırayla söyleyin; bulamayan kaybeder.' },
+    { t: 'Kara liste', x: 'Sırayla Kara Kaplı Defter’e girecek komik bir “yasak” söyleyin. En komik maddeyi yazan kazanır.' },
+    { t: 'Defter düellosu', x: 'Sırayla Beyaz Kaplı Defter’den kraliçeyle ilgili bir detay söyleyin. Takılan ya da tekrar eden kaybeder.' },
+    { t: 'Cips düellosu', x: 'Sırayla bir cips markası ya da çeşidi söyleyin. Takılan kaybeder.' },
     { t: 'Bursa–Tekirdağ', x: 'Sırayla Bursa ya da Tekirdağ’a ait bir şey söyleyin (yer, yemek, ünlü…). Bulamayan kaybeder.' },
     { t: 'Plaka düellosu', x: 'Sırayla bir şehir ve plaka kodu söyleyin (16 Bursa, 59 Tekirdağ…). Yanlış ya da takılan kaybeder 🚗' },
     { t: 'Koza düellosu', x: 'İkiniz de ipekten bir icat tanıtın (ipek telefon kılıfı?). Daha ikna edici olan kazanır.' }
@@ -230,9 +250,53 @@ window.KH_CARDS = {
     { t: 'Ferman', x: 'Kraliçe buyurdu: Kraliçenin hayalî tacını tarif et: hangi taşlar, hangi renkler, Bursa ipeği mi Marmara incisi mi?' },
     { t: 'Ferman', x: 'Kraliçe buyurdu: Bir süre sadece kraliyet diliyle konuş (“Efendim, müsaadenizle…”).' },
     { t: 'Ferman', x: 'Kraliçe buyurdu: Bir kraliyet balosunda vals yapıyormuş gibi dans et.' },
+    { t: 'Ferman', x: 'Kraliçe buyurdu: Kraliçeye hayalî bir şakayık buketi sun ve iki dizelik bir şiir oku.' },
+    { t: 'Ferman', x: 'Kraliçe buyurdu: Barış Akarsu’dan sevdiğin bir şarkının nakaratını söyle.' },
+    { t: 'Ferman', x: 'Kraliçe buyurdu: Nohut’un (sarayın muhabbet kuşu) taklidini yap ve kraliçeye bir cıvıltı serenadı sun.' },
+    { t: 'Ferman', x: 'Kraliçe buyurdu: Dibekle karıştırılmış, şekerli bir Türk kahvesini saray şefi gibi tarif et.' },
+    { t: 'Ferman', x: 'Kraliçe buyurdu: Kraliçenin favorisi soslu makarnanın TV reklamını yap.' },
+    { t: 'Ferman', x: 'Kraliçe buyurdu: Usta bir örgücü gibi kraliçeye hayalî bir atkı ör ve teslim et.' },
+    { t: 'Ferman', x: 'Kraliçe buyurdu: Bildiğin (ya da uydurduğun) üç Japonca kelimeyi söyle ve anlamlarını açıkla.' },
+    { t: 'Ferman', x: 'Kraliçe buyurdu: Bir Kore dizisinin en dramatik ağlama sahnesini canlandır.' },
+    { t: 'Ferman', x: 'Kraliçe buyurdu: Shell’de sandviç ve elmalı soda sipariş eden bir şövalyeyi canlandır.' },
+    { t: 'Kraliyet', x: '👑 Büyük ferman: Kara Kaplı Defter’e yeni bir madde ekle ve mahkemedeymiş gibi savun.', p: 2 },
+    { t: 'Kraliyet', x: '👑 Büyük ferman: Kraliçenin kaşını alırken canını yakan kuaföre resmî bir “saray ihtarnamesi” oku.', p: 2 },
+    { t: 'Kraliyet', x: '👑 Büyük ferman: Beyaz Kaplı Defter’den kraliçeyle ilgili üç güzel detayı söyle.', p: 2 },
     { t: 'Kraliyet', x: '👑 Büyük ferman: Rakibin bir turluğuna kraliçe/kral olur; onun vereceği (kibar!) 3 küçük emri yerine getir.', p: 2 },
     { t: 'Kraliyet', x: '👑 Büyük ferman: Bursa’dan Tekirdağ’a giden bir “kraliyet seferini” tur rehberi gibi anlat.', p: 2 },
     { t: 'Kraliyet', x: '👑 Büyük ferman: Taç giyme töreni sunucusu ol ve rakibini büyük bir coşkuyla tahta davet et.', p: 2 }
+  ],
+
+  // Beyaz Kaplı Defter: ilk seçenek doğru cevaptır (oyunda karıştırılır)
+  defter: [
+    { q: 'Kraliçenin en sevdiği renk hangisi?', a: ['Mor', 'Kırmızı', 'Mavi', 'Yeşil'] },
+    { q: 'Kraliçenin en sevdiği çiçek hangisi?', a: ['Şakayık', 'Gül', 'Lale', 'Papatya'] },
+    { q: 'Kraliçe en çok hangi sanatçının şarkılarını sever?', a: ['Barış Akarsu', 'Tarkan', 'Sezen Aksu', 'Teoman'] },
+    { q: 'Kraliçenin favori yemeği hangisi?', a: ['Soslu makarna', 'İskender', 'Mantı', 'Lahmacun'] },
+    { q: 'Kraliçenin muhabbet kuşunun adı ne?', a: ['Nohut', 'Fıstık', 'Mercimek', 'Cıvıl'] },
+    { q: 'Kraliçenin en sevdiği hobi hangisi?', a: ['Örgü örmek', 'Resim yapmak', 'Bulmaca çözmek', 'Bahçecilik'] },
+    { q: 'Kraliçenin burcu ne?', a: ['İkizler', 'Boğa', 'Yengeç', 'Aslan'] },
+    { q: 'Kara Kaplı Defter’e göre hangi içecek sevilmiyor?', a: ['Sade soda', 'Ayran', 'Limonata', 'Çay'] },
+    { q: 'Hangi soda seviliyor?', a: ['Elmalı soda', 'Sade soda', 'Limonlu soda', 'Hiçbiri'] },
+    { q: 'Kara Kaplı Defter’e göre hangisi masaya gelmez?', a: ['Balık', 'Makarna', 'Cips', 'Kahve'] },
+    { q: 'Kraliçe eti nasıl sever?', a: ['Çok pişmiş', 'Az pişmiş', 'Orta pişmiş', 'Hiç yemez'] },
+    { q: 'Türk kahvesi nasıl içilir?', a: ['Dibekle karışık, şekerli', 'Sade', 'Sütlü', 'Buzlu'] },
+    { q: 'Hangisi kraliçenin sevdiği cipslerden biri?', a: ['Çerezza Süt Mısırlı', 'Ruffles Peynirli', 'Pringles Orijinal', 'Cheetos'] },
+    { q: 'Hangisi de sevdiği cipslerden?', a: ['Doritos Alaturca', 'Doritos Nacho', 'Ruffles Originals', 'Patos'] },
+    { q: 'Hangi ülkelerin dizilerini ve kültürünü seviyoruz?', a: ['Japonya ve Kore', 'İspanya ve İtalya', 'Amerika', 'Hindistan'] },
+    { q: 'Kraliçenin hangi dilde altyapısı var?', a: ['Japonca', 'Almanca', 'İtalyanca', 'Rusça'] },
+    { q: '“Ceyda” isminin anlamı hangisi?', a: ['İyi, güzel, narin, nazik', 'Cesur ve güçlü', 'Işık, aydınlık', 'Deniz kızı'] },
+    { q: 'İlk mesaj hangi uygulamada atıldı?', a: ['Threads', 'Instagram', 'WhatsApp', 'Telegram'] },
+    { q: 'İlk buluşma hangi tarihteydi?', a: ['26 Eylül', '12 Temmuz', '7 Kasım', '30 Haziran'] },
+    { q: 'İlk görüntülü konuşma ne zamandı?', a: ['16 Temmuz', '26 Eylül', '29 Haziran', '1 Ağustos'] },
+    { q: 'İkinci buluşma hangi tarihteydi?', a: ['7 Kasım', '26 Eylül', '16 Temmuz', '12 Temmuz'] },
+    { q: 'Kraliçe şu an hangi bölümde okuyor?', a: ['Halkla İlişkiler', 'Edebiyat', 'Hukuk', 'Mimarlık'] },
+    { q: 'Kara Kaplı Defter’e göre neye alerjimiz var?', a: ['Battaniye', 'Kedi tüyü', 'Polen', 'Çilek'] },
+    { q: 'Sandviçlerini sevdiğimiz yer hangisi?', a: ['Shell', 'Starbucks', 'Simit Sarayı', 'Kahve Dünyası'] },
+    { q: 'Hangi sakız sevilmiyor?', a: ['Naneli sakız', 'Çilekli sakız', 'Karpuzlu sakız', 'Muzlu sakız'] },
+    { q: 'Kraliçenin kendi yapabildiği güzellik işi hangisi?', a: ['Manikür ve pedikür', 'Saç boyama', 'Kirpik lifting', 'Dövme'] },
+    { q: 'Kraliçe hangi şehirde doğup büyüdü?', a: ['Bursa', 'Tekirdağ', 'İstanbul', 'İzmir'] },
+    { q: 'Kraliçe gördüğü örgü modellerinin ne kadarını yapabilir?', a: ['Neredeyse hepsini', 'Hiçbirini', 'Sadece atkı', 'Sadece bere'] }
   ],
 
   // Pas hakkı kullanılınca gelen hafif, komik alternatifler
@@ -278,3 +342,39 @@ window.KH_SCHEDULE = [
   ['23:40', 'Skorlar ve taç töreni 👑', '10 dk'],
   ['23:50+', 'Serbest sohbet, müzik ve kapanış', 'Serbest']
 ];
+
+/* Ana sayfadaki defter (yalnızca paylaşılması sakıncasız, eğlenceli detaylar) */
+window.KH_DEFTER = {
+  white: [
+    ['💜', 'Sevdiği renk', 'Mor'],
+    ['🌸', 'Sevdiği çiçek', 'Şakayık — kendisi gibi zarif'],
+    ['🎤', 'Sevdiği müzik', 'Barış Akarsu'],
+    ['🍝', 'Favori yemek', 'Soslu makarna'],
+    ['🐦', 'Muhabbet kuşu', 'Nohut'],
+    ['🧶', 'Hobisi', 'Örgü; gördüğü neredeyse her modeli yapar'],
+    ['☕', 'Kahve', 'Dibekle karışık, şekerli Türk kahvesi'],
+    ['🍿', 'Cipsler', 'Çerezza Süt Mısırlı, Doritos Alaturca, Lay’s Mevsim Yeşillikli'],
+    ['🥤', 'Soda', 'Elmalı soda'],
+    ['🥪', 'Sandviç', 'Shell’in sandviçleri'],
+    ['🎌', 'Kültür', 'Japonca altyapısı; Japon ve Kore dizileri'],
+    ['♊', 'Burç', 'İkizler'],
+    ['💖', 'İsminin anlamı', 'İyi, güzel, narin, nazik; herkese iyiliği dokunan']
+  ],
+  story: [
+    ['29 Haziran', 'Threads’te ilk mesaj ve ilk konuşma'],
+    ['30 Haziran', 'Instagram’da takip ve ilk sohbet'],
+    ['12 Temmuz', 'WhatsApp’ta ilk mesajlaşma'],
+    ['16 Temmuz', 'İlk görüntülü konuşma'],
+    ['26 Eylül', 'İlk buluşma'],
+    ['7 Kasım', 'İkinci buluşma']
+  ],
+  black: [
+    'Balık ve sakatat',
+    'Sade soda ve naneli sakız',
+    'Az pişmiş, pembemsi et',
+    'Battaniye (alerji!)',
+    'Kaş alırken canı yakan kuaför (ikinci ihtar yok)',
+    'Huzur kaçıran her şey'
+  ],
+  quote: 'İnsan, hatırladığı kadar değer verir.'
+};

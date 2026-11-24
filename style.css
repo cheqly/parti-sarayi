@@ -636,3 +636,24 @@ button { touch-action: manipulation; }
 .tag { white-space: nowrap; }
 .pr-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 0; }
 .pr-meta .tag { margin-left: 6px; vertical-align: 0; }
+
+/* Beyaz Kaplı Defter */
+.quiz { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.quiz-opt { justify-content: flex-start; text-align: left; gap: 12px; min-height: 54px; }
+.qi { flex: 0 0 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-weight: 900; background: rgba(242, 203, 116, 0.15); color: var(--gold-hi); }
+.defter summary > .ico:first-child { color: #d8c4ff; }
+.d-title { font-family: var(--font-display); font-size: 19px; font-weight: 900; color: var(--gold-hi); margin-top: 6px; }
+.d-title.dark { color: var(--text); }
+.d-list, .d-black { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.d-list li { display: flex; gap: 12px; align-items: flex-start; }
+.d-e { flex: 0 0 28px; font-size: 20px; line-height: 1.2; text-align: center; }
+.d-list b { display: block; font-size: 14px; }
+.d-list small { color: var(--muted); font-size: 13px; font-weight: 700; }
+.d-time { list-style: none; margin: 0; padding: 0 0 0 14px; border-left: 2px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
+.d-time li { position: relative; display: flex; flex-direction: column; font-size: 14px; }
+.d-time li::before { content: ''; position: absolute; left: -20px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--gold); }
+.d-time b { color: var(--gold-hi); font-size: 13px; }
+.d-time span { color: var(--text); font-weight: 700; }
+.d-black li { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); font-weight: 700; }
+.d-black .ico { color: var(--red); }
+.d-quote { margin: 8px 0 0; text-align: center; font-family: var(--font-display); font-style: italic; color: var(--gold-hi); font-size: 17px; }

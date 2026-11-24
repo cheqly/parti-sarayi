@@ -26,6 +26,7 @@ Sesli/görüntülü konuşma için WhatsApp ya da telefon görüşmesini açık 
 | 🚫 Yasaklı Kelime | Sohbet edin; yasaklı kelimeyi söyleyen turu kaybeder. |
 | 🎡 Kader Çarkı | Animasyonlu çark 8 kategoriden birini seçer. 👑 Kraliyet görevi 2 puan. |
 | 👸 Kraliçenin Fermanı | Saraydan fermanlar; 👑 büyük fermanlar 2 puan. |
+| 📒 Beyaz Kaplı Defter | Kraliçeyi ne kadar tanıyorsun? 4 şıklı sorular; bilemezsen puan kraliçeye. |
 | ⚡ Bonus Görevler | Şarkı tahmini, emojiyle anlatım, ters röportaj, hayalî restoran… |
 
 Görev havuzunda Bursa (İskender, Uludağ, Karagöz–Hacivat, kestane şekeri) ve Tekirdağ (köfte, Kiraz Festivali, Şarköy) ve Parti Sarayı yol gezisi temalı kartlar var. Ana sayfada **🤴 Semih / 👸 Ceyda** hızlı seçim butonları bulunur.

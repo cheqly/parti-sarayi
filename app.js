@@ -4,7 +4,7 @@
   const GAMES = window.KH_GAMES;
   const WHEEL = window.KH_WHEEL;
   const SCHEDULE = window.KH_SCHEDULE;
-  const AVATARS = ['👸🏽', '🤴🏽', '👑', '🌊', '😎', '🦄', '🐸', '🐼', '🦊', '🐙', '👽', '🤖', '🐯', '🍕', '🌶️', '👑'];
+  const AVATARS = ['👸🏽', '🤴🏽', '👑', '🐦', '🌸', '🌊', '😎', '🦄', '🐸', '🐼', '🦊', '🐙', '👽', '🤖', '🐯', '🍕', '🌶️', '👑'];
   const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
   const $app = document.getElementById('app');
@@ -527,11 +527,12 @@
     chevron: '<path d="m9 18 6-6-6-6"/>',
     heart: '<path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/>',
     sparkle: '<path d="M12 3 13.9 8.8 20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2Z"/><path d="M19 17v4M17 19h4"/>',
-    user: '<circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/>'
+    user: '<circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/>',
+    book: '<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M9 7h7M9 11h5"/>'
   };
   const ic = (name, cls) =>
     '<svg class="ico' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[name] || '') + '</svg>';
-  const GAME_ICON = { sans: 'dice', guldur: 'laugh', dogru: 'search', yasakli: 'ban', cark: 'wheel', kralice: 'scroll', bonus: 'zap' };
+  const GAME_ICON = { sans: 'dice', guldur: 'laugh', dogru: 'search', yasakli: 'ban', cark: 'wheel', kralice: 'scroll', defter: 'book', bonus: 'zap' };
   const gIco = (g) => ic(GAME_ICON[g.id] || 'sparkle');
   const av = (p, cls) => '<span class="av' + (cls ? ' ' + cls : '') + '">' + (p ? p.avatar : '') + '</span>';
   const nameOfPlain = (id) => {
@@ -597,6 +598,7 @@
           '<button class="btn btn-primary" data-a="startLocal">' + ic('play') + 'Başla</button></section>'
         : '') +
       '<section class="list">' +
+      vDefter() +
       '<details class="list-item"><summary>' + ic('help') + '<span>Nasıl oynanır?</span>' + ic('chevron', 'chev') + '</summary><div class="list-body">' +
       '<ol class="steps"><li><b>Oda kur</b>, linki WhatsApp’tan gönder.</li>' +
       '<li>Diğer oyuncu linke dokunur ya da 6 haneli kodu yazar.</li>' +
@@ -612,6 +614,22 @@
       '</section>' +
       '<footer class="foot">Parti Sarayı</footer>' +
       '</main>'
+    );
+  }
+
+  function vDefter() {
+    const D = window.KH_DEFTER;
+    if (!D) return '';
+    return (
+      '<details class="list-item defter"><summary>' + ic('book') + '<span>Beyaz Kaplı Defter</span>' + ic('chevron', 'chev') + '</summary><div class="list-body">' +
+      '<div class="d-title">Kraliçemiz Ceyda 👸🏽</div>' +
+      '<ul class="d-list">' + D.white.map((r) => '<li><span class="d-e">' + r[0] + '</span><span><b>' + esc(r[1]) + '</b><small>' + esc(r[2]) + '</small></span></li>').join('') + '</ul>' +
+      '<div class="d-title">Hikâyemiz</div>' +
+      '<ol class="d-time">' + D.story.map((r) => '<li><b>' + esc(r[0]) + '</b><span>' + esc(r[1]) + '</span></li>').join('') + '</ol>' +
+      '<div class="d-title dark">Kara Kaplı Defter</div>' +
+      '<ul class="d-black">' + D.black.map((x) => '<li>' + ic('x', 'ico-xs') + '<span>' + esc(x) + '</span></li>').join('') + '</ul>' +
+      '<p class="d-quote">“' + esc(D.quote) + '”</p>' +
+      '</div></details>'
     );
   }
 
@@ -898,6 +916,15 @@
           S.players.map((p) => R(p.id, ic('trophy') + esc(p.name), 'btn-success', 'Bonus turu kazandı')).join('') +
           '</div>' + R(null, 'Berabere', 'btn-ghost', 'Berabere') + '</div>'
         );
+      case 'quiz': {
+        const ansP = P(card.answerer);
+        const canAnswer = local || profile.id === card.answerer;
+        if (!canAnswer) return wait('book', (ansP ? esc(ansP.name) : 'Rakip') + ' cevaplıyor… Bilemezse puan sana!');
+        return (
+          '<div class="judge"><div class="judge-q">' + (local && ansP ? esc(ansP.name) + ', doğru' : 'Doğru') + ' cevabı seç:</div>' +
+          '<div class="quiz">' + card.opts.map((o, i) => '<button class="btn btn-ghost quiz-opt" data-a="answer" data-i="' + i + '"><span class="qi">' + 'ABCD'[i] + '</span>' + esc(o) + '</button>').join('') + '</div></div>'
+        );
+      }
       case 'liar': {
         const btn = (a, i, cls) => '<button class="btn ' + cls + '" data-a="' + a + '" data-i="' + i + '">' + (i + 1) + '. hikâye</button>';
         if (S.secret === null) {
@@ -924,7 +951,7 @@
     const words = card.words
       ? '<div class="banned"><div class="banned-title">Yasaklı kelimeler</div>' + card.words.map((w) => '<span>' + esc(w) + '</span>').join('') + '</div>'
       : '';
-    const canPass = !card.isPass && tp && !S.passes[tp.id] && (isLocal() || tp.id === profile.id) && g.judge !== 'either';
+    const canPass = !card.isPass && tp && !S.passes[tp.id] && (isLocal() || tp.id === profile.id) && g.judge !== 'either' && g.judge !== 'quiz';
     return (
       '<div class="card pop' + (card.isPass ? ' pass' : '') + '" style="--c:' + g.color + '" data-cid="' + card.id + '">' +
       '<div class="card-top"><span class="cat">' + esc(card.cat) + '</span>' + (card.points > 1 ? '<span class="pts">' + ic('crown', 'ico-xs') + card.points + ' puan</span>' : '') + '</div>' +
@@ -966,7 +993,7 @@
     const iWon = w && w.id === profile.id;
     const title = crownTitle(w);
     const sub = isLocal() || iWon
-      ? title === 'Kraliçe Ceyda' ? 'Taç yine kraliçede.' : title === 'Kral Semih' ? 'Bu gece taç Semih’te.' : 'Gecenin tacı sende.'
+      ? title === 'Kraliçe Ceyda' ? 'Taç yine kraliçede 🌸 İyi, güzel, narin ve nazik.' : title === 'Kral Semih' ? 'Bu gece taç Semih’te.' : 'Gecenin tacı sende.'
       : 'Bu gece taç onda. Rövanş?';
     return (
       '<section class="final">' +
@@ -1273,6 +1300,9 @@
         break;
       case 'result':
         act('result', { cardId: S.card && S.card.id, winner: d.w || null, note: d.n || '' });
+        break;
+      case 'answer':
+        act('answer', { cardId: S.card && S.card.id, idx: Number(d.i) });
         break;
       case 'tiebreak':
         act('tiebreak', { cardId: S.card && S.card.id, winner: d.w });
