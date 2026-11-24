@@ -4,7 +4,7 @@
   const GAMES = window.KH_GAMES;
   const WHEEL = window.KH_WHEEL;
   const SCHEDULE = window.KH_SCHEDULE;
-  const AVATARS = ['👸', '🤴', '👑', '🌊', '😎', '🦄', '🐸', '🐼', '🦊', '🐙', '👽', '🤖', '🐯', '🍕', '🌶️', '👑'];
+  const AVATARS = ['👸🏽', '🤴🏽', '👑', '🌊', '😎', '🦄', '🐸', '🐼', '🦊', '🐙', '👽', '🤖', '🐯', '🍕', '🌶️', '👑'];
   const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
   const $app = document.getElementById('app');
@@ -39,6 +39,8 @@
   /* ---------- uygulama durumu ---------- */
   const profile = store.get('profile', null) || { id: uid(), name: '', avatar: '👑' };
   if (!profile.id) profile.id = uid();
+  if (profile.avatar === '👸') profile.avatar = '👸🏽';
+  if (profile.avatar === '🤴') profile.avatar = '🤴🏽';
   store.set('profile', profile);
 
   const ui = {
@@ -362,7 +364,7 @@
     const b = document.getElementById('local2');
     const n1 = (a && a.value.trim()) || 'Oyuncu 1';
     const n2 = (b && b.value.trim()) || 'Oyuncu 2';
-    const avFor = (n, d) => (/ceyda/i.test(n) ? '👸' : /semih/i.test(n) ? '🤴' : d);
+    const avFor = (n, d) => (/ceyda/i.test(n) ? '👸🏽' : /semih/i.test(n) ? '🤴🏽' : d);
     const p1 = { id: 'L1', name: n1, avatar: avFor(n1, '👑') };
     const p2 = { id: 'L2', name: n2, avatar: avFor(n2, '🌊') };
     S = G.newState({ code: 'LOCAL', mode: 'local', host: p1 });
@@ -546,8 +548,8 @@
   }
 
   const PRESETS = [
-    { n: 'Semih', av: '🤴', role: 'Sarayın kralı' },
-    { n: 'Ceyda', av: '👸', role: 'Sarayın kraliçesi' }
+    { n: 'Semih', av: '🤴🏽', role: 'Sarayın kralı' },
+    { n: 'Ceyda', av: '👸🏽', role: 'Sarayın kraliçesi' }
   ];
 
   function vHome() {
@@ -964,8 +966,8 @@
   function crownTitle(p) {
     if (!p) return 'Sarayın Sahibi';
     const n = p.name.toLocaleLowerCase('tr');
-    if (n.includes('ceyda') || p.avatar === '👸') return 'Kraliçe Ceyda';
-    if (n.includes('semih') || p.avatar === '🤴') return 'Kral Semih';
+    if (n.includes('ceyda') || p.avatar.startsWith('👸')) return 'Kraliçe Ceyda';
+    if (n.includes('semih') || p.avatar.startsWith('🤴')) return 'Kral Semih';
     return 'Sarayın Sahibi';
   }
 

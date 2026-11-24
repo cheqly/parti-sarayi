@@ -3,7 +3,7 @@
 > **Bursa 16 ❤ Tekirdağ 59.** İki telefon. Tek oda. Aynı görev. Ortak skor. Bol kahkaha.
 >
 > Gece, Semih ile Kraliçe Ceyda’nın sarayında geçer. Gecenin kazananı tacı giyer:
-> **👸 Kraliçe Ceyda** ya da **🤴 Kral Semih**.
+> **👸🏽 Kraliçe Ceyda** ya da **🤴🏽 Kral Semih**.
 
 “Party Arcade” planından yola çıkılarak hazırlanmış, **telefon tarayıcısında** çalışan,
 kurulum ve hesap gerektirmeyen iki kişilik parti oyunu.
