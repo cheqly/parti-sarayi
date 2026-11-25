@@ -150,6 +150,17 @@
       this.pub(this.base + '/a', JSON.stringify(a), false);
     }
 
+    /* Telefon uykudan/arka plandan dönünce: eski (ölü olabilecek) bağlantıları
+       kapatıp hemen yeniden bağlan; kayıtlı oda durumu anında tekrar gelir. */
+    restart() {
+      const cs = this.clients;
+      this.clients = [];
+      cs.forEach((c) => {
+        try { c.end(true); } catch (e) {}
+      });
+      return this.open();
+    }
+
     leave() {
       this.closed = true;
       const cs = this.clients;

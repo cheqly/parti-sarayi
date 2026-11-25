@@ -1461,6 +1461,15 @@
     }
   });
 
+  document.addEventListener('focusin', (e) => {
+    const t = e.target;
+    if (t && (t.tagName === 'TEXTAREA' || t.id === 'codeInput')) {
+      setTimeout(() => {
+        try { t.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (err) {}
+      }, 320);
+    }
+  });
+
   document.addEventListener('input', (e) => {
     if (e.target && e.target.id === 'codeInput') {
       const v = cleanCode(e.target.value);
@@ -1476,14 +1485,31 @@
     }
   });
 
+  let hiddenAt = 0;
+  let restarting = false;
+  function freshen() {
+    if (!room || restarting || !S || isLocal()) return;
+    restarting = true;
+    ui.status = 'reconnecting';
+    updateStatusPill();
+    room.restart().then(() => {
+      restarting = false;
+      // bekleyen hamle varsa yeniden yayınla
+      if (pendingActs.length) reconcile();
+    });
+  }
   document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') hiddenAt = Date.now();
+    if (document.visibilityState === 'visible' && hiddenAt && Date.now() - hiddenAt > 2500) {
+      hiddenAt = 0;
+      freshen();
+    }
     if (document.visibilityState === 'visible') {
-      room && room.poke();
       if (ui.screen === 'game') keepAwake();
     }
   });
-  window.addEventListener('online', () => room && room.poke());
-  window.addEventListener('pageshow', (e) => e.persisted && room && room.poke());
+  window.addEventListener('pageshow', (e) => e.persisted && freshen());
+  window.addEventListener('online', () => freshen());
 
   /* ---------- başlangıç ---------- */
   function boot() {
