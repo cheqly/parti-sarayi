@@ -60,7 +60,7 @@ body {
   touch-action: manipulation;
   overscroll-behavior-y: none;
 }
-button, input, a { font: inherit; color: inherit; }
+button, input, textarea, a { font: inherit; color: inherit; }
 button { touch-action: manipulation; }
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
@@ -657,3 +657,28 @@ button { touch-action: manipulation; }
 .d-black li { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); font-weight: 700; }
 .d-black .ico { color: var(--red); }
 .d-quote { margin: 8px 0 0; text-align: center; font-family: var(--font-display); font-style: italic; color: var(--gold-hi); font-size: 17px; }
+
+/* Yazışma ve hikâye formu */
+.ta { min-height: 48px; padding: 12px 14px; resize: none; line-height: 1.35; font-weight: 700; }
+.chat { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--line-soft); }
+.chat-title { display: flex; align-items: center; gap: 8px; font-weight: 900; color: var(--gold-hi); font-size: 14px; }
+.chat-hint { margin: 0; }
+.msgs { display: flex; flex-direction: column; gap: 6px; max-height: 260px; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-right: 2px; }
+.msg { align-self: flex-start; max-width: 85%; padding: 8px 12px; border-radius: 14px 14px 14px 4px; background: var(--surface-2); font-size: 15px; font-weight: 700; display: flex; flex-direction: column; word-break: break-word; }
+.msg b { font-size: 11px; color: var(--gold); letter-spacing: .3px; }
+.msg.mine { align-self: flex-end; background: rgba(242, 203, 116, 0.16); border-radius: 14px 14px 4px 14px; }
+.say-row { display: flex; gap: 8px; align-items: flex-end; }
+.say-row .ta { flex: 1; min-width: 0; }
+.say-btn { flex: 0 0 52px; width: 52px; padding: 0; }
+.say-btn .ico { margin: 0; }
+.who-say { display: flex; gap: 8px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.who-say label { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--line-soft); border-radius: 99px; }
+.who-say input { accent-color: var(--gold); }
+.story-form { gap: 10px; }
+.story-in { display: flex; flex-direction: column; gap: 6px; }
+.lie-pick { align-self: flex-end; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: var(--muted); }
+.lie-pick input { accent-color: var(--rose); width: 18px; height: 18px; }
+.stories { display: flex; flex-direction: column; gap: 8px; }
+.story-btn { display: flex; gap: 12px; align-items: flex-start; text-align: left; padding: 12px 14px; border-radius: var(--r-md); border: 1.5px solid var(--line-soft); background: transparent; font-weight: 700; font-size: 15px; cursor: pointer; }
+.story-btn:active { background: var(--surface-2); }
+.story-btn.static { cursor: default; }

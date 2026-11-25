@@ -161,6 +161,7 @@
     const isHost = by === s.hostId;
     const tp = turnPlayer(s);
     const cardOk = () => s.card && a.cardId === s.card.id;
+    if (a.aid && (state.applied || []).includes(a.aid)) return state;
 
     switch (a.type) {
       case 'join': {
@@ -181,7 +182,7 @@
         break;
       }
       case 'settings': {
-        if (!isHost && !local) return state;
+        if (!local && me < 0) return state;
         if ([3, 5, 7, 10, 15].includes(a.target)) s.target = a.target;
         if ([2, 4, 6, 8, 10].includes(a.rounds)) s.rounds = a.rounds;
         if (s.players.some((p) => p.score >= s.target) && s.phase === 'lobby') {
@@ -245,6 +246,38 @@
       case 'timer':
       case 'stopTimer':
         return state;
+      case 'say': {
+        // Kart altındaki yazışma: iki oyuncu da yazabilir
+        if (s.phase !== 'play' || !cardOk()) return state;
+        if (!local && me < 0) return state;
+        const text = String(a.text || '').replace(/\s+/g, ' ').trim().slice(0, 300);
+        if (!text) return state;
+        if (a.aid && (s.card.msgs || []).some((m) => m.id === a.aid)) return state;
+        const who = local ? (a.as && idx(s, a.as) >= 0 ? a.as : by) : by;
+        s.card.msgs = (s.card.msgs || []).concat([{ by: who, t: text, id: a.aid || String(Date.now()) }]).slice(-40);
+        // Yasaklı Kelime: yazılan mesajda yasaklı kelime varsa tur otomatik biter
+        if (s.game === 'yasakli' && s.card.words && !s.card.isPass) {
+          const low = text.toLocaleLowerCase('tr');
+          const hit = s.card.words.find((w) => new RegExp('(^|[^a-zçğıöşüâîû])' + w.toLocaleLowerCase('tr')).test(low));
+          if (hit) {
+            const writer = s.players[idx(s, who)];
+            const winner = other(s, who);
+            settle(s, winner ? winner.id : null, 1, (writer ? writer.name : 'Biri') + ' yasaklı kelimeyi yazdı: “' + hit + '”');
+          }
+        }
+        break;
+      }
+      case 'stories': {
+        // Doğru mu Uydurdum mu: anlatıcı 3 hikâyeyi yazar ve uydurmayı gizlice seçer
+        if (s.phase !== 'play' || s.game !== 'dogru' || !cardOk() || s.card.isPass) return state;
+        if (!local && (!tp || tp.id !== by)) return state;
+        if (![0, 1, 2].includes(a.idx) || s.guess !== null || s.secret !== null) return state;
+        const st = (Array.isArray(a.texts) ? a.texts : []).slice(0, 3).map((t) => String(t || '').replace(/\s+/g, ' ').trim().slice(0, 240));
+        if (st.length !== 3 || st.some((t) => !t)) return state;
+        s.card.stories = st;
+        s.secret = a.idx;
+        break;
+      }
       case 'secret': {
         // Doğru mu Uydurdum mu: anlatıcı yalanı gizlice işaretler
         if (s.phase !== 'play' || s.game !== 'dogru' || !cardOk() || s.card.isPass) return state;
@@ -344,6 +377,8 @@
         return state;
     }
     s.rev = (state.rev || 0) + 1;
+    // Uygulanan hamlelerin kimliği: aynı hamle iki kez uygulanmasın
+    if (a.aid) s.applied = (s.applied || []).concat(a.aid).slice(-80);
     return s;
   }
 

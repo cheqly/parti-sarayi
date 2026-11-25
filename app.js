@@ -66,6 +66,7 @@
   let session = null; // { mode, code }
   let room = null; // KhNet.Room
   let presence = {};
+  let pendingActs = [];
   const seenAids = [];
 
   /* ---------- ses & titreşim ---------- */
@@ -150,25 +151,16 @@
       commit(G.reduce(S, a));
       return;
     }
-    if (isHost()) {
-      commit(G.reduce(S, a));
+    // Online: hamle bu telefonda uygulanır ve oda durumu doğrudan yayınlanır.
+    // Oda sahibinin telefonu uykuda olsa bile oyun akar.
+    const next = G.reduce(S, a);
+    if (next === S) {
+      render();
       return;
     }
-    // misafir: host'a gönder, cevap gelmezse bir kez tekrar dene
-    room.send(a);
-    const rev = S.rev;
-    ui.pending = { aid: a.aid, rev };
-    render();
-    setTimeout(() => {
-      if (ui.pending && ui.pending.aid === a.aid && S && S.rev === rev) room.send(a);
-    }, 3000);
-    setTimeout(() => {
-      if (ui.pending && ui.pending.aid === a.aid && S && S.rev === rev) {
-        ui.pending = null;
-        render();
-        toast('Oda sahibine ulaşılamadı, tekrar dene.', 'warn');
-      }
-    }, 7000);
+    if (['ready', 'settings'].includes(a.type)) pendingActs = pendingActs.filter((p) => p.a.type !== a.type);
+    pendingActs.push({ a, until: Date.now() + 20000 });
+    commit(next);
   }
 
   function commit(next) {
@@ -179,22 +171,48 @@
     const prev = S;
     S = next;
     if (isLocal()) store.set('local', S);
-    else if (room && isHost()) room.publishState(S);
+    else if (room) {
+      S.by = profile.id;
+      room.publishState(S);
+    }
     react(prev, S);
     render();
   }
 
-  // Host: misafirden gelen aksiyonu işle
-  function onAction(a) {
-    if (!S || !isHost() || !a || a.by === profile.id) return;
-    if (a.aid) {
-      if (seenAids.includes(a.aid)) return;
-      seenAids.push(a.aid);
-      if (seenAids.length > 100) seenAids.shift();
+  // Eski sürümlerle uyum: aksiyon mesajları artık kullanılmıyor
+  function onAction() {}
+
+  // Aynı anda iki telefon yazarsa: daha yeni (rev) olan kazanır; eşitlikte yazar kimliği belirler.
+  const content = (x) => {
+    const c = Object.assign({}, x);
+    delete c.rev;
+    delete c.by;
+    return JSON.stringify(c);
+  };
+  function newer(a, b) {
+    if (!b) return true;
+    if ((a.rev || 0) !== (b.rev || 0)) return (a.rev || 0) > (b.rev || 0);
+    return String(a.by || '') > String(b.by || '');
+  }
+  // Başka telefonun yazdığı durum bizim son hamlemizi ezdiyse hamleyi yeniden uygula
+  function reconcile() {
+    const now = Date.now();
+    let changed = false;
+    pendingActs = pendingActs.filter((p) => {
+      const applied = (S.applied || []).includes(p.a.aid);
+      if (applied) return false; // onaylandı
+      if (p.until < now) return false;
+      const n = G.reduce(S, p.a);
+      if (n !== S) {
+        S = n;
+        changed = true;
+      }
+      return false;
+    });
+    if (changed && room) {
+      S.by = profile.id;
+      room.publishState(S);
     }
-    const next = G.reduce(S, a);
-    if (next !== S) commit(next);
-    else room.publishState(S); // misafirin ekranı güncel kalsın
   }
 
   function onState(s) {
@@ -206,9 +224,10 @@
       return;
     }
     if (G.expired(s)) return;
-    if (S && s.code === S.code && (s.rev || 0) < (S.rev || 0)) return; // eski durum
+    if (S && s.code === S.code && !newer(s, S)) return; // eski ya da kaybeden durum
     const prev = S;
     S = s;
+    if (pendingActs.length) reconcile();
     if (ui.pending && s.rev !== ui.pending.rev) ui.pending = null;
     react(prev, S);
     render();
@@ -475,7 +494,40 @@
     else html = vHome();
     // Dönmekte olan çarkı yeniden çizimde koru (animasyon bozulmasın)
     const oldWheel = document.getElementById('wheel');
+    // Yazılmakta olan metinleri ve seçimleri yeniden çizimde koru
+    const keep = {};
+    let focusId = null;
+    let selS = 0;
+    let selE = 0;
+    $app.querySelectorAll('textarea[id], input[data-keep]').forEach((el) => {
+      if (el.tagName === 'TEXTAREA') keep[el.id] = el.value;
+      else keep[el.getAttribute('data-keep')] = el.checked;
+    });
+    const ae = document.activeElement;
+    if (ae && ae.tagName === 'TEXTAREA' && ae.id && $app.contains(ae)) {
+      focusId = ae.id;
+      selS = ae.selectionStart;
+      selE = ae.selectionEnd;
+    }
+    const msgsEl = document.getElementById('msgs');
+    const atBottom = !msgsEl || msgsEl.scrollTop + msgsEl.clientHeight >= msgsEl.scrollHeight - 30;
     $app.innerHTML = html;
+    $app.querySelectorAll('textarea[id]').forEach((el) => {
+      if (keep[el.id] != null) el.value = keep[el.id];
+    });
+    $app.querySelectorAll('input[data-keep]').forEach((el) => {
+      const k = el.getAttribute('data-keep');
+      if (keep[k] != null) el.checked = keep[k];
+    });
+    if (focusId) {
+      const f = document.getElementById(focusId);
+      if (f) {
+        f.focus({ preventScroll: true });
+        try { f.setSelectionRange(selS, selE); } catch (e) {}
+      }
+    }
+    const m2 = document.getElementById('msgs');
+    if (m2 && atBottom) m2.scrollTop = m2.scrollHeight;
     const newWheel = document.getElementById('wheel');
     if (oldWheel && newWheel && oldWheel.getAttribute('data-card') === newWheel.getAttribute('data-card')) newWheel.replaceWith(oldWheel);
     afterRender();
@@ -528,6 +580,7 @@
     heart: '<path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/>',
     sparkle: '<path d="M12 3 13.9 8.8 20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2Z"/><path d="M19 17v4M17 19h4"/>',
     user: '<circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/>',
+    send: '<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>',
     book: '<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M9 7h7M9 11h5"/>'
   };
   const ic = (name, cls) =>
@@ -720,6 +773,7 @@
   }
 
   function hostAwayBanner() {
+    if (true) return ''; // artık oda sahibine bağımlı değil
     if (isLocal() || isHost() || !S) return '';
     const hostOn = presence[S.hostId];
     if (hostOn !== false) {
@@ -788,7 +842,7 @@
   }
 
   function vSettings() {
-    const can = isLocal() || isHost();
+    const can = isLocal() || !!me();
     const seg = (key, vals, cur) =>
       '<div class="seg">' +
       vals.map((v) => '<button class="seg-btn' + (v === cur ? ' on' : '') + '" ' + (can ? 'data-a="set" data-k="' + key + '" data-v="' + v + '"' : 'disabled') + '>' + v + '</button>').join('') +
@@ -797,7 +851,7 @@
       '<section class="panel settings"><div class="lbl">Ayarlar</div>' +
       '<div class="set-row"><span>' + ic('target', 'ico-sm') + 'Hedef puan</span>' + seg('target', [3, 5, 10, 15], S.target) + '</div>' +
       '<div class="set-row"><span>' + ic('repeat', 'ico-sm') + 'Oyun başına tur</span>' + seg('rounds', [4, 6, 8, 10], S.rounds) + '</div>' +
-      (can ? '' : '<div class="muted small">Ayarları oda sahibi değiştirebilir.</div>') +
+      
       '</section>'
     );
   }
@@ -926,21 +980,29 @@
         );
       }
       case 'liar': {
-        const btn = (a, i, cls) => '<button class="btn ' + cls + '" data-a="' + a + '" data-i="' + i + '">' + (i + 1) + '. hikâye</button>';
         if (S.secret === null) {
           if (local || iAmTurn) {
             return (
-              '<div class="judge"><div class="judge-q">' + (local ? esc(tp.name) + ', ' : '') + 'üç hikâyeyi anlat ve uydurma olanı <b>gizlice</b> seç.</div>' +
+              '<div class="judge story-form"><div class="judge-q">' + (local ? esc(tp.name) + ', üç' : 'Üç') + ' kısa hikâye yaz: ikisi gerçek, biri uydurma. Uydurmayı <b>gizlice</b> işaretle.</div>' +
               (local ? '<div class="muted small center-text">' + ic('eyeoff', 'ico-xs') + ' ' + esc(o.name) + ' ekrana bakmasın</div>' : '') +
-              '<div class="row three">' + [0, 1, 2].map((i) => btn('secret', i, 'btn-secondary')).join('') + '</div></div>'
+              [0, 1, 2].map((i) =>
+                '<div class="story-in"><label class="lie-pick"><input type="radio" name="lie" value="' + i + '" data-keep="lie' + i + '"><span>Uydurma</span></label>' +
+                '<textarea id="story' + i + '" class="input ta" rows="2" maxlength="240" placeholder="' + (i + 1) + '. hikâye"></textarea></div>'
+              ).join('') +
+              '<button class="btn btn-primary" data-a="stories">' + ic('lock') + 'Hikâyeleri gönder</button></div>'
             );
           }
-          return wait('mic', nameOfPlain(tp.id) + ' üç hikâye anlatacak. Dinle, sonra uydurmayı tahmin et.');
+          return wait('mic', nameOfPlain(tp.id) + ' üç hikâye yazıyor. Hazır olunca burada göreceksin.');
         }
-        if (!local && iAmTurn) return wait('lock', 'Seçimin kilitlendi. ' + nameOfPlain(o.id) + ' tahmin ediyor…');
+        const stories = card.stories || ['1. hikâye', '2. hikâye', '3. hikâye'];
+        const list = (clickable) =>
+          '<div class="stories">' + stories.map((t, i) =>
+            (clickable ? '<button class="story-btn" data-a="guess" data-i="' + i + '">' : '<div class="story-btn static">') +
+            '<span class="qi">' + (i + 1) + '</span><span>' + esc(t) + '</span>' + (clickable ? '</button>' : '</div>')
+          ).join('') + '</div>';
+        if (!local && iAmTurn) return '<div class="judge">' + list(false) + wait('lock', 'Hikâyelerin gönderildi. ' + nameOfPlain(o.id) + ' uydurmayı tahmin ediyor…') + '</div>';
         return (
-          '<div class="judge"><div class="judge-q">' + ic('lock', 'ico-xs') + ' ' + (local ? esc(o.name) + ', sence' : 'Sence') + ' hangisi uydurma?</div>' +
-          '<div class="row three">' + [0, 1, 2].map((i) => btn('guess', i, 'btn-primary')).join('') + '</div></div>'
+          '<div class="judge"><div class="judge-q">' + ic('lock', 'ico-xs') + ' ' + (local ? esc(o.name) + ', sence' : 'Sence') + ' hangisi uydurma? Dokun:</div>' + list(true) + '</div>'
         );
       }
     }
@@ -959,13 +1021,54 @@
       words +
       (g.id === 'dogru' && !card.isPass ? '<div class="card-note">İkisi gerçek, biri uydurma.</div>' : '') +
       '</div>' +
-            judgeBtns(g, card, tp) +
+            (g.id === 'yasakli' || g.id === 'guldur' ? vChat(g, card, tp) + judgeBtns(g, card, tp) : judgeBtns(g, card, tp) + vChat(g, card, tp)) +
       '<div class="row card-actions">' +
       (!card.isPass && S.guess === null && S.secret === null ? '<button class="btn btn-mini btn-ghost" data-a="change">' + ic('refresh', 'ico-sm') + 'Kartı değiştir</button>' : '') +
       (canPass ? '<button class="btn btn-mini btn-ghost" data-a="pass">' + ic('ticket', 'ico-sm') + 'Pas geç (1 hak)</button>' : '') +
       (!card.isPass && tp && S.passes[tp.id] && (isLocal() || tp.id === profile.id) ? '<span class="muted small">Pas hakkı kullanıldı</span>' : '') +
       '</div>'
     );
+  }
+
+  function vChat(g, card, tp) {
+    if (card.isPass) return '';
+    const msgs = card.msgs || [];
+    const hint =
+      g.id === 'yasakli' ? 'Sohbeti buraya yazın. Yasaklı kelimeyi yazan turu kaybeder!' :
+      g.id === 'guldur' ? 'Güldürmek için fıkranı, esprini buraya yaz.' :
+      g.id === 'dogru' ? 'Soru sor, sohbet et.' :
+      'Cevabını ya da görevi nasıl yaptığını buraya yaz.';
+    const bubbles = msgs.map((m) => {
+      const mine = !isLocal() && m.by === profile.id;
+      const p = P(m.by);
+      return '<div class="msg' + (mine ? ' mine' : '') + '">' + (mine ? '' : '<b>' + (p ? esc(p.name) : '') + '</b>') + '<span>' + esc(m.t) + '</span></div>';
+    }).join('');
+    const localWho = isLocal()
+      ? '<div class="who-say">' + S.players.map((p, i) => '<label><input type="radio" name="sayAs" value="' + p.id + '" data-keep="sayAs' + i + '"' + (tp && tp.id === p.id ? ' checked' : '') + '><span>' + esc(p.name) + '</span></label>').join('') + '</div>'
+      : '';
+    return (
+      '<section class="chat">' +
+      '<div class="chat-title">' + ic('chat', 'ico-sm') + '<span>Yazışma</span></div>' +
+      (bubbles ? '<div class="msgs" id="msgs">' + bubbles + '</div>' : '<p class="muted small chat-hint">' + hint + '</p>') +
+      localWho +
+      '<div class="say-row"><textarea id="sayInput" class="input ta" rows="1" maxlength="300" placeholder="Yaz…" enterkeyhint="send"></textarea>' +
+      '<button class="btn btn-primary say-btn" data-a="say" aria-label="Gönder">' + ic('send') + '</button></div>' +
+      '</section>'
+    );
+  }
+
+  function sendMsg() {
+    const el = document.getElementById('sayInput');
+    if (!el || !S || !S.card) return;
+    const text = el.value.trim();
+    if (!text) return;
+    const asEl = document.querySelector('input[name=sayAs]:checked');
+    el.value = '';
+    act('say', { cardId: S.card.id, text, as: asEl ? asEl.value : undefined });
+    setTimeout(() => {
+      const box = document.getElementById('sayInput');
+      if (box) box.focus();
+    }, 30);
   }
 
   function vTiebreak() {
@@ -1301,6 +1404,23 @@
       case 'result':
         act('result', { cardId: S.card && S.card.id, winner: d.w || null, note: d.n || '' });
         break;
+      case 'stories': {
+        const texts = [0, 1, 2].map((i) => (document.getElementById('story' + i) || {}).value || '');
+        const pick = document.querySelector('input[name=lie]:checked');
+        if (texts.some((x) => !x.trim())) {
+          toast('Üç hikâyeyi de yaz.', 'warn');
+          break;
+        }
+        if (!pick) {
+          toast('Uydurma olanı işaretle.', 'warn');
+          break;
+        }
+        act('stories', { cardId: S.card && S.card.id, texts, idx: Number(pick.value) });
+        break;
+      }
+      case 'say':
+        sendMsg();
+        break;
       case 'answer':
         act('answer', { cardId: S.card && S.card.id, idx: Number(d.i) });
         break;
@@ -1329,6 +1449,11 @@
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
     const id = e.target && e.target.id;
+    if (id === 'sayInput' && !e.shiftKey) {
+      e.preventDefault();
+      sendMsg();
+      return;
+    }
     if (id === 'codeInput') joinRoom(e.target.value, false);
     else if (id === 'nameInput') {
       e.target.blur();
